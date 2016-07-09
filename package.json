@@ -1,0 +1,42 @@
+{
+  "name": "sails-inverse-model",
+  "version": "1.0.0",
+  "description": "Generate models for sails from the database",
+  "license": "MIT",
+  "repository": "https://github.com/juliandavidmr/sails-inverse-model",
+  "bin": {
+    "sails-inverse-model": "cli.js"
+  },
+  "author": {
+    "name": "Julian David",
+    "url": "https://github.com/juliandavidmr"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": ""
+  },
+  "files": [
+    "index.js",
+    "cli.js",
+    "yes.json",
+    "no.json"
+  ],
+  "keywords": [
+    "cli-app",
+    "cli",
+    "bin",
+    "sails",
+    "generator",
+    "model",
+    "json",
+    "mysql",
+    "prompt",
+    "auto"
+  ],
+  "dependencies": {
+    "meow": "^3.5.0",
+    "mysqldesc": "^1.1.3"
+  }
+}
