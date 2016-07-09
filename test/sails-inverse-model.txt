@@ -1,0 +1,53 @@
+[
+  categoria: {
+  idcategoria: {
+    type: "integer",
+    size: 11,
+    primaryKey: true,
+    required: true,
+    autoIncrement: true
+  },
+  nombrecategoria: {
+    type: "string",
+    size: 100,
+  },
+  estado: {
+    enum: ["T","F"],
+  },
+},
+ciudad: {
+  idciudad: {
+    type: "integer",
+    size: 11,
+    primaryKey: true,
+    required: true
+  },
+  nombreciudad: {
+    type: "string",
+    size: 45,
+  },
+  fk_iddpto: {
+    type: "integer",
+    size: 11,
+    required: true
+  },
+},
+comerciantes: {
+  idcomerciante: {
+    type: "integer",
+    size: 11,
+    primaryKey: true,
+    required: true,
+    autoIncrement: true
+  },
+  nombre: {
+    type: "string",
+    size: 100,
+  },
+  descripcion: {
+    , }, correo: {type: "string",size: 100, }, paginaweb: {type: "string",size: 100, }, telefono: {type: "integer",size: 20, }, direccion: {type: "string",size: 100, }, latitud: {type: "string",size: 100, }, longitud: {type: "string",size: 100, },} ',
+  'cuenta: {idcuenta: {type: "integer",size: 11, primaryKey: true, required: true, autoIncrement: true}, username: {type: "string",size: 45, }, password: {, }, estado: {enum: ["T","F"], }, fk_idrol: {type: "integer",size: 11, required: true}, fk_idpersona: {type: "integer",size: 20, required: true},} ',
+  'departamento: {iddpto: {type: "integer",size: 11, primaryKey: true, required: true}, nombredpto: {type: "string",size: 45, },} ',
+  'menu: {fk_idrol: {type: "integer",size: 11, primaryKey: true, required: true}, fk_idpermiso: {type: "integer",size: 11, primaryKey: true, required: true}, estado: {enum: ["T","F"], },} ',
+  'permisos: {idpermiso: {type: "integer",size: 11, primaryKey: true, required: true, autoIncrement: true}, nombrepermiso: {type: "string",size: 50, }, url: {type: "string",size: 45, }, icono: {type: "string",size: 45, },} ',
+  'persona: {idpersona: {type: "integer",size: 20, primaryKey: true, required: true, autoIncrement: true}, identificacion: {type: "integer",size: 20, }, nombres: {type: "string",size: 45, }, apellidos: {type: "string",size: 45, }, direccion: {type: "string",size: 45, }, correo: {type: "string",size: 45, }, fk_idciudad: {type: "integer",size: 11, required: true},} ' ]
