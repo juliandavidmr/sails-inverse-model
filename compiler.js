@@ -1,3 +1,5 @@
+'use strict';
+
 exports.toSailsAttribute = function(prop, attrib) {
 	var attribute = attrib.toLowerCase() + ": {";
 	var size, type, required, primarykey, unique, autoincrement, vdefault;

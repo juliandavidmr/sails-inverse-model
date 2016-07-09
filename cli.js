@@ -9,9 +9,7 @@ var ansi = require('ansi-styles');
 var ProgressBar = require('progress');
 var Beautifier = require('node-js-beautify');
 var b = new Beautifier();
-var compiler = require('./utils/compiler');
-
-var yesNoWords = require('./');
+var compiler = require('./compiler');
 
 var cli = meow([
 	'Examples',
@@ -35,7 +33,7 @@ var cli = meow([
 	'  -p, --pass  Password of mysql',
 	'  -d, --database	Database of mysql',
 	'  -h, --host	Host server mysql		Default: localhost',
-	'  -f, --folder	Folder output	Default: Folder actual',
+	'  -f, --folder	Folder output	Default: Folder actual'
 	//'  --type  Type of word: yes|no|all  Default: all',
 	//'  --neez  Type of word: yes|no|all  Default: all',
 ]);
