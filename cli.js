@@ -50,6 +50,7 @@ if (cli.flags.u || cli.flags.user) {
 //Password
 if (cli.flags.p || cli.flags.pass) {
 	pass = cli.flags.p || cli.flags.pass;
+	pass = pass.toString();
 }
 
 //Database
