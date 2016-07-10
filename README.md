@@ -1,15 +1,14 @@
 
-Inverse modeling for SailsJS
--------------
+# Inverse modeling for SailsJS & Waterline ##
 
-#### Sails-inverse-model is an installable module that helps you generate models SailsJS from a database any.. ####
+#### Sails-inverse-model is an installable module that helps you generate models and controllers SailsJS from a database any. ####
 
-This library also provides all the functions necessary to convert between different data types and store in files.
+This npm also provides all the functions necessary to convert between different data types.
 
 * [Installation](#installation)
-* [Options](#Options)
+* [Import](#import)
 * [Usage](#usage)
-* [Example](#Example)
+
 ------
 
 ## Installation ##
@@ -25,20 +24,25 @@ $> npm install sails-inverse-model -g
 In the bash o cmd:
 
 ```bash
+$ sails-inverse-model --help
+  Generate models for Sails.js from the database any.
 
-  Generate models for sails from the database
+  Examples
+    $ sails-inverse-model --help
+
+  Generate models for Sails.js from the database any.
 
   Examples
     $ sails-inverse-model --help
     ...
 
-    $ sails-inverse-model -u root -p root -d thedbname -f /home/julian/Documentos/sails/sails-inverse-model/test/api
+    $ sails-inverse-model -u root -p root -d independiente -m -c
     User:	 root
     Password: root
-    Database: thedb
+    Database: dbname
     Host:	 localhost
     Output folder:	 /home/julian/Documentos/Node_Projects/sails-inverse-model/test/api
-    tablas
+    53 tables
     ===============================================================================================
 
     complete
@@ -49,26 +53,39 @@ In the bash o cmd:
     -p, --pass  Password of mysql
     -d, --database	Database of mysql
     -h, --host	Host server mysql		Default: localhost
-    -f, --folder	Folder output	Default: Folder actual
-
+    -m, --models	Folder output models	Default: Folder actual
+    -c, --controllers	Folder output	controllers Default: Folder actual
+    -l, --lang  Pluralize models and controllers: es|en|fr  Default: no pluralize
 ```
 
 # Example ##
 ==========
+
+Go to folder of project SailsJS and:
 ```bash
 
-$ sails-inverse-model -u root -p root -d thedbname -f /home/julian/Documentos/Node_Projects/sails-inverse-model/test/api
-
+$ sails-inverse-model -u root -p root -d yourdb -m -c
 
 User:	 root
 Password: root
-Database: independient
+Database: yourdb
 Host:	 localhost
-Output folder:	 /home/julian/Documentos/Node_Projects/sails-inverse-model/test/api
- tablas
+Pluralize:	 undefined
+Models:	 /home/julian/Escritorio/test/models
+Controllers:	 /home/julian/Escritorio/test/controllers
+8 tables
 ========
 
-complete
+Complete
+
+ xxxController.js created successfull
+ xxyController.js created successfull
+ xxzController.js created successfull
+ xxuController.js created successfull
+ xxgController.js created successfull
+ xxhController.js created successfull  
+ xxjController.js created successfull
+ xxkController.js created successfull
 ```
 
 ### Then navigate to the output folder and can find the js generated.

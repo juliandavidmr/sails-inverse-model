@@ -1,6 +1,6 @@
 {
   "name": "sails-inverse-model",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Generate models for Sails.js from the database any.",
   "license": "MIT",
   "repository": "https://github.com/juliandavidmr/sails-inverse-model",
