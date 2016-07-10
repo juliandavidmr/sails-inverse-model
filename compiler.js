@@ -102,11 +102,10 @@ function getOthers(prop) {
 		if (prop["Key"].toLowerCase().indexOf("pri") > -1) {
 			out.push("primaryKey: true");
       out.push("unique: true");
+			out.push("required: true");
 		}
 	}
-  if (prop["Null"].toLowerCase().indexOf("no") > -1 || prop["Key"]) {
-    out.push("required: true");
-  }
+  /*if (prop["Null"].toLowerCase().indexOf("no") > -1 || prop["Key"]) {}*/
   if (prop["Extra"].toLowerCase().indexOf("increment") > -1) {
 		out.push("autoIncrement: true");
 	}

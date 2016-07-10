@@ -7,22 +7,24 @@ var mysqldesc = require('mysqldesc');
 var gencode = require('gencode');
 var ansi = require('ansi-styles');
 var ProgressBar = require('progress');
+var plural = require('./plural');
 var Beautifier = require('node-js-beautify');
 var b = new Beautifier();
 var compiler = require('./compiler');
+var mkdir = require("mkdir-promise");
 
 var cli = meow([
 	'Examples',
 	'  $ sails-inverse-model --help',
 	'  ...',
 	'',
-	'  $ sails-inverse-model -u root -p root -d sys -f /home/julian/Documentos/sails/sails-inverse-model/test/api',
+	'  $ sails-inverse-model -u root -p root -d sys -f /url/to/folder/api',
 	'  User:	 root',
 	'  Password: root',
 	'  Database: sys',
 	'  Host:	 localhost',
-	'  Output folder:	 /home/julian/Documentos/Node_Projects/sails-inverse-model/test/api',
- 	'  tablas',
+	'  Output folder:	 /url/to/folder/api',
+	'  tablas',
 	'  ===============================================================================================',
 	'  ',
 	'  complete',
@@ -30,55 +32,52 @@ var cli = meow([
 	'',
 	'Options',
 	'  -u, --user  User of mysql',
-	'  -p, --pass  Password of mysql',
-	'  -d, --database	Database of mysql',
-	'  -h, --host	Host server mysql		Default: localhost',
-	'  -f, --folder	Folder output	Default: Folder actual'
+	'  -p, --pasfolder_controllers + "/controllers"g	Pluralize models, Example: "--lang en". Available es, en, fr'
 	//'  --type  Type of word: yes|no|all  Default: all',
 	//'  --neez  Type of word: yes|no|all  Default: all',
 ]);
 
 //var type = cli.flags.type || 'all';
 
-var user, pass, db, host, port, folder;
+var user, pass, db, host, port, folder_models, plurallang, folder_controllers;
 
 //User mysql
-if (cli.flags.u || cli.flags.user) {
-	user = cli.flags.u || cli.flags.user;
-}
+user = cli.flags.u || cli.flags.user;
 
 //Password
 if (cli.flags.p || cli.flags.pass) {
-	pass = cli.flags.p || cli.flags.pass;
-	pass = pass.toString();
+	pass = (cli.flags.p || cli.flags.pass).toString();
 }
 
 //Database
-if (cli.flags.d || cli.flags.database) {
-	db = cli.flags.d || cli.flags.database;
-}
+db = cli.flags.d || cli.flags.database;
 
 //Host of Mysql
-if (cli.flags.h || cli.flags.host) {
-	host = cli.flags.h || cli.flags.host;
-} else {
-	host = "localhost";
-}
+host = cli.flags.h || cli.flags.host || "localhost";
+
+plurallang = cli.flags.l || cli.flags.lang;
 
 //Folder output
-if (cli.flags.f || cli.flags.folder) {
-	folder = cli.flags.f || cli.flags.folder;
-} else {
-	folder = process.cwd();
+folder_models = cli.flags.f || cli.flags.folder || (process.cwd());
+if (folder_models == true || folder_models == "true") {
+	folder_models = (process.cwd()) + "/models";
 }
 
-console.log("User:\t", ansi.green.open + user + ansi.green.close);
-console.log("Password:", ansi.green.open + pass + ansi.green.close);
-console.log("Database:", ansi.green.open + db + ansi.green.close);
-console.log("Host:\t", ansi.green.open + host + ansi.green.close);
-console.log("Output folder:\t", ansi.green.open + folder + ansi.green.close);
+folder_controllers = cli.flags.c || cli.flags.controllers || (process.cwd())
+if (folder_controllers == true || folder_controllers == "true") {
+	folder_controllers = (process.cwd() + "/controllers")
+}
 
 if (db && pass && user && host) {
+
+	console.log("User:\t", ansi.green.open + user + ansi.green.close);
+	console.log("Password:", ansi.green.open + pass + ansi.green.close);
+	console.log("Database:", ansi.green.open + db + ansi.green.close);
+	console.log("Host:\t", ansi.green.open + host + ansi.green.close);
+	console.log("Pluralize:\t", ansi.green.open + plurallang + ansi.green.close);
+	console.log("Models:\t", ansi.green.open + folder_models + ansi.green.close);
+	console.log("Controllers:\t", ansi.green.open + folder_controllers + ansi.green.close);
+
 	// Mysql connect config.
 	var config = {
 		user: user,
@@ -93,50 +92,73 @@ if (db && pass && user && host) {
 			console.log("ERROR: ", err);
 		} else {
 			var sails = [],
+				Models = [],
 				cantidad = 0;
-			console.log([data.length, "tablas"].join(" "));
-			for (var tt in data) { // table: Name table
+			for (var tt in data) { // tt: Name table
+				Models.push(tt);
 				cantidad++;
 			}
+			console.log([cantidad, "tables"].join(" "));
 			//			console.log(">",cantidad);
 			var bar = new ProgressBar(':bar', {
 				total: cantidad
 			});
-			for (var table in data) { // table: Name table
-				var salida = "";
-				if (data.hasOwnProperty(table)) {
-					//console.log(table + " = " + JSON.stringify(data[table], null, 4));
-					//salida = salida.concat(tabl.toLowerCase() + ": {");
-					salida = salida.concat("attributes: {");
-					for (var colum in data[table]) {
-						salida += compiler.toSailsAttribute(data[table][colum], colum) + ", ";
-					}
-					salida = compiler.quitComma(salida).concat("} ");
-				}
-				var model = salida.replace('\\', '');
-				//console.log(model);
-				var file = (table + ".js");
-				//console.log(b.beautify_js(toModel(model), {}));
-				gencode.save(b.beautify_js(toModel(model)), folder, file).then((value) => {
-					//console.log([ansi.green.open, table + "> ", value, ansi.green.close].join(" "));
-					//console.log(file);
-					bar.tick();
-					if (bar.complete) {
-						console.log('\ncomplete\n');
-					}
-				}, (err) => {
-					console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
-				})
 
-				sails.push(model);
+			mkdir(folder_models).then(function() {
+				for (var table in data) { // table: Name table
+					var salida = "";
+					if (data.hasOwnProperty(table)) {
+						//console.log(table + " = " + JSON.stringify(data[table], null, 4));
+						//salida = salida.concat(tabl.toLowerCase() + ": {");
+						salida = salida.concat("attributes: {");
+						for (var colum in data[table]) {
+							salida += compiler.toSailsAttribute(data[table][colum], colum) + ", ";
+						}
+						salida = compiler.quitComma(salida).concat("} ");
+					}
+					var model = salida.replace('\\', '');
+
+					var file = capitalize((plural.pluraliza(table, plurallang)) + ".js");
+					//console.log(file);
+					gencode.save(b.beautify_js(toModel(model)), folder_models, file).then((value) => {
+						//console.log([ansi.green.open, table + "> ", value, ansi.green.close].join(" "));
+						//console.log(file);
+						bar.tick();
+						if (bar.complete) {
+							console.log('\nComplete\n');
+						}
+					}, (err) => {
+						console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
+					});
+
+					sails.push(model);
+				}
+
+			}, function(ex) {
+				console.error(ex);
+			});
+
+			if (folder_controllers) {
+				mkdir(folder_controllers).then(function() {
+					Models.map((item, i) => {
+						//console.log("Tabla " + i + ">\n" + item);
+						createController(item);
+					});
+				}, function(ex) {
+					console.error(ex);
+				});
 			}
-			/*sails.map((item, i) => {
-				console.log("Tabla " + i + ">\n" + item);
-			});*/
 		}
 	});
+} else {
+	console.log([ansi.yellow.open, "ERROR", "Missing parameters: enter 'sails-inverse-model --help'", ansi.yellow.close].join("\n"));
 }
 
+/**
+ * [toModel simple json to model sails]
+ * @param  {[type]} model_basic [description]
+ * @return {[string]}             [string]
+ */
 function toModel(model_basic) {
 	var out = [];
 	out.push("/**");
@@ -149,4 +171,31 @@ function toModel(model_basic) {
 	return out.join("\n");
 }
 
-//console.log(cli.flags.all ? yesNoWords[type].join('\n') : yesNoWords[type + 'Random'].join('\n'));
+function createController(name) {
+	var name_c = capitalize(plural.pluraliza(name, plurallang)).trim() + "Controller.js";
+
+	var content = [];
+	content.push("/**");
+	content.push("* " + name_c);
+	content.push("*");
+	content.push("* @description :: Server-side logic for managing " + name);
+	content.push("* @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers");
+	content.push("*/");
+	content.push("module.exports = {");
+	content.push("");
+	content.push("};");
+
+	gencode.save(b.beautify_js((content.join("\n"))), folder_controllers, name_c).then((value) => {
+		//console.log([ansi.green.open, table + "> ", value, ansi.green.close].join(" "));
+		//console.log(file);
+		console.log([ansi.green.open, name_c + "created", value, ansi.green.close].join(" "));
+	}, (err) => {
+		console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
+	})
+}
+
+function capitalize(word) {
+	return word.replace(/(^|\s)([a-z])/g, function(m, p1, p2) {
+		return p1 + p2.toUpperCase();
+	})
+}

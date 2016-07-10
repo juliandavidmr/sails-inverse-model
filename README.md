@@ -7,9 +7,9 @@ Inverse modeling for SailsJS
 This library also provides all the functions necessary to convert between different data types and store in files.
 
 * [Installation](#installation)
-* [Import](#import)
+* [Options](#Options)
 * [Usage](#usage)
-
+* [Example](#Example)
 ------
 
 ## Installation ##
