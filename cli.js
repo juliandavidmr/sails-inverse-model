@@ -13,18 +13,19 @@ var b = new Beautifier();
 var compiler = require('./compiler');
 var mkdir = require("mkdir-promise");
 
+
 var cli = meow([
 	'Examples',
 	'  $ sails-inverse-model --help',
 	'  ...',
 	'',
-	'  $ sails-inverse-model -u root -p root -d sys -f /url/to/folder/api',
+	'  $ sails-inverse-model -u root -p root -d independiente -m -c',
 	'  User:	 root',
 	'  Password: root',
-	'  Database: sys',
+	'  Database: dbname',
 	'  Host:	 localhost',
-	'  Output folder:	 /url/to/folder/api',
-	'  tablas',
+	'  Output folder:	 /home/julian/Documentos/Node_Projects/sails-inverse-model/test/api',
+ 	'  53 tables',
 	'  ===============================================================================================',
 	'  ',
 	'  complete',
@@ -32,8 +33,15 @@ var cli = meow([
 	'',
 	'Options',
 	'  -u, --user  User of mysql',
-	'  -p, --pasfolder_controllers + "/controllers"g	Pluralize models, Example: "--lang en". Available es, en, fr'
-	//'  --type  Type of word: yes|no|all  Default: all',
+	'  -p, --pass  Password of mysql',
+	'  -d, --database	Database of mysql',
+	'  -h, --host	Host server mysql		Default: localhost',
+	'  -m, --models	Folder output models	Default: Folder actual',
+	'  -c, --controllers	Folder output	controllers Default: Folder actual',
+	'  -l, --lang  Pluralize models and controllers: es|en|fr  Default: no pluralize',
+	//'  --neez  Type of word: yes|no|all  Default: all',
+	//'  --neez  Type of word: yes|no|all  Default: all',
+	//'  --neez  Type of word: yes|no|all  Default: all',
 	//'  --neez  Type of word: yes|no|all  Default: all',
 ]);
 
@@ -58,7 +66,7 @@ host = cli.flags.h || cli.flags.host || "localhost";
 plurallang = cli.flags.l || cli.flags.lang;
 
 //Folder output
-folder_models = cli.flags.f || cli.flags.folder || (process.cwd());
+folder_models = cli.flags.m || cli.flags.models || (process.cwd());
 if (folder_models == true || folder_models == "true") {
 	folder_models = (process.cwd()) + "/models";
 }
@@ -186,12 +194,10 @@ function createController(name) {
 	content.push("};");
 
 	gencode.save(b.beautify_js((content.join("\n"))), folder_controllers, name_c).then((value) => {
-		//console.log([ansi.green.open, table + "> ", value, ansi.green.close].join(" "));
-		//console.log(file);
-		console.log([ansi.green.open, name_c + "created", value, ansi.green.close].join(" "));
+		console.log([ansi.green.open, name_c, "created", value, ansi.green.close].join(" "));
 	}, (err) => {
 		console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
-	})
+	});
 }
 
 function capitalize(word) {
