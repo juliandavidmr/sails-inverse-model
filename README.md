@@ -1,4 +1,5 @@
 
+![enter image description here](http://sailsjs.org/images/bkgd_squiddy.png)
 # Inverse modeling for SailsJS & Waterline ##
 
 #### Sails-inverse-model is an installable module that helps you generate models and controllers SailsJS from a database any. ####
@@ -6,7 +7,6 @@
 This npm also provides all the functions necessary to convert between different data types.
 
 * [Installation](#installation)
-* [Import](#import)
 * [Usage](#usage)
 
 ------
@@ -76,7 +76,7 @@ Controllers:	 /home/julian/Escritorio/test/controllers
 8 tables
 ========
 
-Complete
+Complete models.
 
  xxxController.js created successfull
  xxyController.js created successfull
@@ -87,7 +87,10 @@ Complete
  xxjController.js created successfull
  xxkController.js created successfull
 ```
-
 ### Then navigate to the output folder and can find the js generated.
+
+
+----------
+
 
 > __It will soon be available a version for PostgreSQL.__

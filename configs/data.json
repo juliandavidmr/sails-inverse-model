@@ -1,0 +1,28 @@
+{
+  "ignore": [
+    "/*",
+    "--",
+    "create database",
+    "use",
+    "set",
+    "@",
+    "delimiter",
+    "create trigger",
+    "after",
+    "call",
+    "for",
+    "each",
+    "row",
+    "begin",
+    "call",
+    "new",
+    "end",
+    "create definer",
+    "declare",
+    "leave",
+    "if",
+    "open",
+    "fetch",
+    "close"
+  ]
+}

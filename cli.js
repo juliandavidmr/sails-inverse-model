@@ -7,12 +7,11 @@ var mysqldesc = require('mysqldesc');
 var gencode = require('gencode');
 var ansi = require('ansi-styles');
 var ProgressBar = require('progress');
-var plural = require('./plural');
+var plural = require('./configs/plural');
 var Beautifier = require('node-js-beautify');
 var b = new Beautifier();
-var compiler = require('./compiler');
+var compiler = require('./compilers/compiler_mysql');
 var mkdir = require("mkdir-promise");
-
 
 var cli = meow([
 	'Examples',
@@ -25,7 +24,7 @@ var cli = meow([
 	'  Database: dbname',
 	'  Host:	 localhost',
 	'  Output folder:	 /home/julian/Documentos/Node_Projects/sails-inverse-model/test/api',
- 	'  53 tables',
+	'  53 tables',
 	'  ===============================================================================================',
 	'  ',
 	'  complete',
@@ -41,16 +40,14 @@ var cli = meow([
 	'  -l, --lang  Pluralize models and controllers: es|en|fr  Default: no pluralize',
 	//'  --neez  Type of word: yes|no|all  Default: all',
 	//'  --neez  Type of word: yes|no|all  Default: all',
-	//'  --neez  Type of word: yes|no|all  Default: all',
-	//'  --neez  Type of word: yes|no|all  Default: all',
 ]);
-
-//var type = cli.flags.type || 'all';
 
 var user, pass, db, host, port, folder_models, plurallang, folder_controllers;
 
 //User mysql
-user = cli.flags.u || cli.flags.user;
+if (cli.flags.u || cli.flags.user) {
+	user = cli.flags.u || cli.flags.user;
+}
 
 //Password
 if (cli.flags.p || cli.flags.pass) {
@@ -82,7 +79,7 @@ if (db && pass && user && host) {
 	console.log("Password:", ansi.green.open + pass + ansi.green.close);
 	console.log("Database:", ansi.green.open + db + ansi.green.close);
 	console.log("Host:\t", ansi.green.open + host + ansi.green.close);
-	console.log("Pluralize:\t", ansi.green.open + plurallang + ansi.green.close);
+	console.log("Pluralize:\t", ansi.green.open + (plurallang || "No pluralize") + ansi.green.close);
 	console.log("Models:\t", ansi.green.open + folder_models + ansi.green.close);
 	console.log("Controllers:\t", ansi.green.open + folder_controllers + ansi.green.close);
 
@@ -99,52 +96,50 @@ if (db && pass && user && host) {
 		if (err) {
 			console.log("ERROR: ", err);
 		} else {
-			var sails = [],
-				Models = [],
+			var Models = [],
 				cantidad = 0;
 			for (var tt in data) { // tt: Name table
 				Models.push(tt);
 				cantidad++;
 			}
 			console.log([cantidad, "tables"].join(" "));
-			//			console.log(">",cantidad);
+			//console.log(">",cantidad);
 			var bar = new ProgressBar(':bar', {
 				total: cantidad
 			});
 
-			mkdir(folder_models).then(function() {
-				for (var table in data) { // table: Name table
-					var salida = "";
-					if (data.hasOwnProperty(table)) {
-						//console.log(table + " = " + JSON.stringify(data[table], null, 4));
-						//salida = salida.concat(tabl.toLowerCase() + ": {");
-						salida = salida.concat("attributes: {");
-						for (var colum in data[table]) {
-							salida += compiler.toSailsAttribute(data[table][colum], colum) + ", ";
+			if (folder_models) {
+				mkdir(folder_models).then(function() {
+					for (var table in data) { // table: Name table
+						var salida = "";
+						if (data.hasOwnProperty(table)) {
+							//console.log(table + " = " + JSON.stringify(data[table], null, 4));
+							salida = salida.concat("attributes: {");
+							for (var colum in data[table]) {
+								salida += compiler.toSailsAttribute(data[table][colum], colum) + ", ";
+							}
+							salida = compiler.quitComma(salida).concat("} ");
 						}
-						salida = compiler.quitComma(salida).concat("} ");
-					}
-					var model = salida.replace('\\', '');
+						var model = salida.replace('\\', '');
 
-					var file = capitalize((plural.pluraliza(table, plurallang)) + ".js");
-					//console.log(file);
-					gencode.save(b.beautify_js(toModel(model)), folder_models, file).then((value) => {
-						//console.log([ansi.green.open, table + "> ", value, ansi.green.close].join(" "));
+						var file = capitalize((plural.pluraliza(table, plurallang)) + ".js");
 						//console.log(file);
-						bar.tick();
-						if (bar.complete) {
-							console.log('\nComplete\n');
-						}
-					}, (err) => {
-						console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
-					});
+						gencode.save(b.beautify_js(toModel(model)), folder_models, file).then((value) => {
+							//console.log([ansi.green.open, table + "> ", value, ansi.green.close].join(" "));
+							//console.log(file);
+							bar.tick();
+							if (bar.complete) {
+								console.log('\nComplete models.\n');
+							}
+						}, (err) => {
+							console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
+						});
+					}
 
-					sails.push(model);
-				}
-
-			}, function(ex) {
-				console.error(ex);
-			});
+				}, function(ex) {
+					console.error(ex);
+				});
+			}
 
 			if (folder_controllers) {
 				mkdir(folder_controllers).then(function() {
