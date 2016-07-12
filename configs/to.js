@@ -1,3 +1,9 @@
+/**
+ * to.js
+ * @autor Julian David (@anlijudavid)
+ * @version 1.0.0
+ * 2016
+ */
 
 var plural = require('./plural');
 

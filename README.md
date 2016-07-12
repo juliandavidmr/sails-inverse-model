@@ -2,12 +2,15 @@
 ![enter image description here](http://sailsjs.org/images/bkgd_squiddy.png)
 # Inverse modeling for SailsJS & Waterline ##
 
+[![Build Status](https://travis-ci.org/juliandavidmr/sails-inverse-model.svg?branch=master)](https://travis-ci.org/juliandavidmr/sails-inverse-model)
+
 #### Sails-inverse-model is an installable module that helps you generate models and controllers SailsJS from a database any. ####
 
 This npm also provides all the functions necessary to convert between different data types.
 
 * [Installation](#installation)
 * [Usage](#usage)
+* [Steps tutorial](#)
 
 ------
 

@@ -1,3 +1,10 @@
+/**
+ * scanner.js
+ * @autor Julian David (@anlijudavid)
+ * @version 1.0.0
+ * 2016
+ */
+
 var gencode = require('gencode');
 var data = require('./data.json');
 

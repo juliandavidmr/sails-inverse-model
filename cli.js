@@ -60,12 +60,20 @@ plurallang = cli.flags.l || cli.flags.lang;
 //Folder output
 folder_models = cli.flags.m || cli.flags.models;
 if (folder_models == true || folder_models == "true") {
-	folder_models = (process.cwd()) + "/models";
+	if (require('is-os').isWindows()) {
+		folder_models = (process.cwd()) + "\\models";
+	} else {
+		folder_models = (process.cwd()) + "/models";
+	}
 }
 
 folder_controllers = cli.flags.c || cli.flags.controllers;
 if (folder_controllers == true || folder_controllers == "true") {
-	folder_controllers = (process.cwd() + "/controllers")
+	if (require('is-os').isWindows()) {
+		folder_controllers = (process.cwd() + "\\controllers")
+	} else {
+		folder_controllers = (process.cwd() + "/controllers")
+	}
 }
 
 if (db && pass && user && host) {

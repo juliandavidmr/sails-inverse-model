@@ -1,3 +1,12 @@
+/**
+ * to.js
+ * @autor Julian David (@anlijudavid)
+ * @version 1.0.0
+ * 2016
+ *
+ * Process mysql to models waterline
+ */
+
 'use strict';
 
 var mysqldesc = require('mysqldesc');
@@ -6,6 +15,7 @@ var gencode = require('gencode');
 var ansi = require('ansi-styles');
 var mkdir = require("mkdir-promise");
 var Beautifier = require('node-js-beautify');
+var s = require("underscore.string");
 
 
 var plural = require('../configs/plural');
@@ -22,7 +32,7 @@ exports.generate = function(config, folder_models, folder_controllers, plurallan
 			var Models = [],
 				cantidad = 0;
 			for (var tt in data) { // tt: Name table
-				Models.push(tt);
+				Models.push(s.camelize(tt));
 				cantidad++;
 			}
 			console.log([cantidad, "tables"].join(" "));
@@ -47,7 +57,7 @@ exports.generate = function(config, folder_models, folder_controllers, plurallan
 
 						var file = to.capitalize((plural.pluraliza(table, plurallang)) + ".js");
 						//console.log(file);
-						gencode.save(b.beautify_js(to.toModel(model)), folder_models, file).then((value) => {
+						gencode.save(b.beautify_js(to.toModel(model)), folder_models, s.camelize(file)).then((value) => {
 							//console.log([ansi.green.open, table + "> ", value, ansi.green.close].join(" "));
 							//console.log(file);
 							bar_models.tick();
@@ -95,7 +105,8 @@ exports.toSailsAttribute = function(prop, attrib) {
 	var attribute = attrib.toLowerCase() + ": {";
 	var size, type, required, primarykey, unique, autoincrement, vdefault;
 	//console.log(attrib);
-	if (prop.Type.toLowerCase().indexOf('varchar') > -1) {
+	if (prop.Type.toLowerCase().indexOf('varchar') > -1
+			|| prop.Type.toLowerCase().indexOf('time') > -1) {
 		attribute = attribute.concat(getString(prop.Type));
 	} else if (prop.Type.toLowerCase().indexOf('int') > -1 ||
 		prop.Type.toLowerCase().indexOf('small') > -1) { //Include smallint
@@ -104,8 +115,7 @@ exports.toSailsAttribute = function(prop, attrib) {
 		prop.Type.toLowerCase().indexOf('bit') > -1) {
 		attribute = attribute.concat(getBoolean());
 	} else if (prop.Type.toLowerCase().indexOf('float') > -1 ||
-		prop.Type.toLowerCase().indexOf('dec') > -1 //Include decimal
-		||
+		prop.Type.toLowerCase().indexOf('dec') > -1 || //Include decimal
 		prop.Type.toLowerCase().indexOf('numeric') > -1 ||
 		prop.Type.toLowerCase().indexOf('real') > -1 ||
 		prop.Type.toLowerCase().indexOf('precicion') > -1) {
@@ -116,11 +126,9 @@ exports.toSailsAttribute = function(prop, attrib) {
 		attribute = attribute.concat(getText());
 	} else if (prop.Type.toLowerCase().indexOf('datetime') > -1) {
 		attribute = attribute.concat(getDateTime());
-	} else if (prop.Type.toLowerCase().indexOf('date') > -1 ||
-		prop.Type.toLowerCase().indexOf('year') > -1) {
+	} else if (prop.Type.toLowerCase().indexOf('date') > -1
+		|| prop.Type.toLowerCase().indexOf('year') > -1) {
 		attribute = attribute.concat(getDate());
-	} else if (prop.Type.toLowerCase().indexOf('datetime') > -1) {
-		attribute = attribute.concat(getDateTime());
 	}
 
 	attribute = attribute.concat(", " + getOthers(prop));

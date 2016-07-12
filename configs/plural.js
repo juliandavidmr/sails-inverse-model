@@ -1,3 +1,10 @@
+/**
+ * Plural.js
+ * @autor Julian David (@anlijudavid)
+ * @version 1.0.0
+ * 2016
+ */
+
 var plural_en = require('pluralize');
 var plural_es = require('pluralize-es');
 var plural_fr = require('pluralize-fr');
