@@ -1,6 +1,6 @@
 {
   "name": "sails-inverse-model",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Generate models and controllers for Sails.js from the database any.",
   "license": "MIT",
   "repository": "https://github.com/juliandavidmr/sails-inverse-model",
@@ -40,7 +40,8 @@
     "file",
     "argv",
     "sql",
-    "api"
+    "api",
+    "waterline"
   ],
   "dependencies": {
     "ansi-styles": "^2.2.1",
