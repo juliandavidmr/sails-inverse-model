@@ -63,7 +63,7 @@ host = cli.flags.h || cli.flags.host || "localhost";
 plurallang = cli.flags.l || cli.flags.lang;
 
 //Folder output
-folder_models = cli.flags.m || cli.flags.models || (process.cwd());
+folder_models = cli.flags.m || cli.flags.models;
 if (folder_models == true || folder_models == "true") {
 	folder_models = (process.cwd()) + "/models";
 }

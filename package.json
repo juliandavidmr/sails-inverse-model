@@ -20,8 +20,8 @@
   "files": [
     "index.js",
     "cli.js",
-    "compiler.js",
-    "plural.js"
+    "compilers/",
+    "configs/"
   ],
   "keywords": [
     "cli-app",
