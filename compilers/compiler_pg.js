@@ -12,7 +12,7 @@ var s = require("underscore.string");
 var PostgresSchema = require('pg-json-schema-export');
 
 exports.generate = function(config, folder_models, folder_controllers, plurallang) {
-	PostgresSchema.toJSON(config, 'public')
+	PostgresSchema.toJSON(config, config.schema)
 		.then(function(schemas) {
 			//console.log(JSON.stringify(schemas, null, 4));
 			var Models = [];
@@ -41,13 +41,47 @@ exports.generate = function(config, folder_models, folder_controllers, plurallan
 			}
 
 			//console.log(JSON.stringify(Models, null, 4));
-			saveModels(__dirname + "/test/", Models, plurallang);
+			if (folder_models != "") {
+				saveModels(folder_models, Models, plurallang);
+			}
+			if (folder_controllers != "") {
+				saveControllers(folder_controllers, Models, plurallang);
+			}
 		})
 		.catch(function(error) {
 			console.log(error);
 			// handle error
 		});
 };
+
+
+/**
+ * [saveModels save models in the folder Models]
+ * @param  {[type]} dir_folder_model [description]
+ * @param  {[type]} Models           [description]
+ * @return {[type]}                  [description]
+ */
+function saveControllers(dir_folder_controllers, Models, plurallang) {
+	var bar2 = new ProgressBar(':bar', {
+		total: Models.length
+	});
+
+	mkdir(dir_folder_controllers).then(() => {
+		Models.map((model) => {
+			var name_c = to.capitalize(plural.pluraliza(model.model_name, plurallang)).trim() + "Controller.js";
+			gencode.save(b.beautify_js(to.saveController(name_c)), dir_folder_controllers, name_c).then((value) => {
+				bar2.tick();
+				if (bar2.complete) {
+					console.log('\nComplete Controllers.\n');
+				}
+			}, (err) => {
+				console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
+			});
+		});
+	}, function(ex) {
+		console.error(ex);
+	});
+}
 
 /**
  * [saveModels save models in the folder Models]
@@ -166,12 +200,12 @@ function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
  * =============================================================================
  * 															Testing
  */
-var config = {
+/*var config = {
 	user: 'postgres',
 	password: 'root',
 	host: 'localhost',
 	port: 5432,
 	database: 'almacen'
 }
-
-exports.generate(config, "any folder", "any folder 2", "en");
+*/
+//exports.generate(config, "any folder", "any folder 2", "en");
