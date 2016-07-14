@@ -1,0 +1,3 @@
+exports.getHtmlAttribute = function () {
+
+};

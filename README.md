@@ -64,6 +64,7 @@ Options
   -l, --lang  Pluralize models and controllers: es|en|fr  Default: no pluralize
   -t, --type  Type gestor database: mysql|postgres  Default: mysql
   -s, --schema  Schema of database postgres: Default: public (Only PostgreSQL)
+  -i, --intelligen  Detects your attributes of type passwords and mail: y|n Default: n
 ```
 
 # MySQL ##

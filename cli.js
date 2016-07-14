@@ -37,10 +37,11 @@ var cli = meow([
 	'  -l, --lang  Pluralize models and controllers: es|en|fr  Default: no pluralize',
 	'  -t, --type  Type gestor database: mysql|postgres  Default: mysql',
 	'  -s, --schema  Schema of database postgres: Default: public (Only PostgreSQL)',
+	//'	 -i, --intelligen  Detects your attributes of type passwords and mail: y|n Default: n'
 	//'  --neez  Type of word: yes|no|all  Default: all',
 ]);
 
-var user, pass, db, host, port, folder_models, plurallang, folder_controllers, schema, type;
+var user, pass, db, host, port, folder_models, plurallang, folder_controllers, schema, type, intelligen;
 
 //User mysql
 if (cli.flags.u || cli.flags.user) {
@@ -73,7 +74,6 @@ if (schema == true || schema == "true") {
 	schema = "public";
 }
 
-
 //Folder output
 folder_models = cli.flags.m || cli.flags.models;
 if (folder_models == true || folder_models == "true") {
@@ -92,6 +92,9 @@ if (folder_controllers == true || folder_controllers == "true") {
 		folder_controllers = (process.cwd() + "/controllers")
 	}
 }
+
+//Intelligen
+intelligen = cli.flags.i || cli.flags.intelligen;
 
 if (db && pass && user && host) {
 
@@ -116,8 +119,8 @@ if (db && pass && user && host) {
 	};
 
 	if(folder_controllers || folder_models) {
-		schema = schema.toLowerCase();
-		if (schema.indexOf("pg") > -1 || schema.indexOf("postgres") > -1) {
+		type = type.toLowerCase();
+		if (type.indexOf("pg") > -1 || type.indexOf("postgres") > -1) {
 			config.port = 5432;
 			compiler_pg.generate(config, folder_models, folder_controllers, plurallang);
 		} else {

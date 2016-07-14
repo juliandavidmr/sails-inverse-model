@@ -26,16 +26,18 @@ exports.generate = function(config, folder_models, folder_controllers, plurallan
 					var attrs = schemas.tables[table]["columns"];
 					//console.log(attrs);
 					var attributes_sails = [];
-					for (var attr in attrs) { // attribute of a table
+					for (var attr in attrs) { // attributes of a table
 						var name_attribute = attr;
 						var properties_attribute = attrs[attr];
 						//console.log("\n------>>", properties_attribute);
-						attributes_sails.push(transpile(properties_attribute, name_attribute));
+						var result = transpile(properties_attribute, name_attribute);
+						attributes_sails.push(result.model_content);
+						console.log(">:", result.model_content);
 					}
 
 					Models.push({
 						model_name: plural.pluraliza(s.camelize(table), plurallang).trim(),
-						content: "attributes: { " + (attributes_sails.join(",")) + " }"
+						content: "attributes: { " + (attributes_sails.join(", ")) + " }"
 					});
 				}
 			}
@@ -85,8 +87,8 @@ function saveControllers(dir_folder_controllers, Models, plurallang) {
 
 /**
  * [saveModels save models in the folder Models]
- * @param  {[type]} dir_folder_model [description]
- * @param  {[type]} Models           [description]
+ * @param  {string} dir_folder_model [description]
+ * @param  {array of models: {model_name & content}} Models           [Array of models postgres]
  * @return {[type]}                  [description]
  */
 function saveModels(dir_folder_model, Models, plurallang) {
@@ -94,6 +96,8 @@ function saveModels(dir_folder_model, Models, plurallang) {
 		total: Models.length
 	});
 
+	console.log("_____________________________________________________________________________________________");
+	console.log(Models);
 	mkdir(dir_folder_model).then(() => {
 		Models.map((model) => {
 			var name_m = to.capitalize(plural.pluraliza(model.model_name, plurallang)).trim() + ".js";
@@ -112,7 +116,7 @@ function saveModels(dir_folder_model, Models, plurallang) {
 }
 
 /**
- * [transpile convert all attributes postgres to sailsjs]
+ * [transpile: convert all attributes postgres to sailsjs]
  * @param  {[type]} attributes     [description]
  * @param  {[type]} name_attribute [description]
  * @return {[type]}                [description]
@@ -132,43 +136,55 @@ function transpile(attributes, name_attribute) {
 
 /**
  * [toSailsAttribute convert a attribute postgres to sailsjs]
- * @param  {[type]}  type_          [description]
- * @param  {[type]}  attrib         [description]
- * @param  {[type]}  default_value_ [description]
- * @param  {Boolean} is_nullable_   [description]
- * @return {[type]}                 [description]
+ * @param  {string}  type_          [type object: varying, bigint...]
+ * @param  {string}  attrib         [name of attribute: mail, id, pet...]
+ * @param  {string}  default_value_ [value for default: if boolean --> default: false | true]
+ * @param  {Boolean} is_nullable_   [required?]
+ * @return {string}                 [result; attribute sailsjs]
  */
 function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
 
 	var sails_attribute = [];
-
 	var sails_attribute_children = [];
+	var content_view = {
+		required: (is_nullable_ == "true" || is_nullable_ == true),
+		default_value: undefined,
+		name: attrib,
+		type: undefined
+	};
 
 	//console.log(attrib);
 	if (type_.toLowerCase().indexOf('varying') > -1 ||
 		type_.toLowerCase().indexOf('character') > -1) {
 		sails_attribute_children.push("type: 'string'");
+		content_view.type = "text";
 	} else if (type_.toLowerCase().indexOf('int') > -1 ||
 		type_.toLowerCase().indexOf('small') > -1) { //Include smallint
 		sails_attribute_children.push("type: 'integer'");
+		content_view.type = "number";
 	} else if (type_.toLowerCase().indexOf('bool') > -1 ||
 		type_.toLowerCase().indexOf('bit') > -1) {
 		sails_attribute_children.push("type: 'boolean'");
+		content_view.type = "boolean";
 	} else if (type_.toLowerCase().indexOf('float') > -1 ||
 		type_.toLowerCase().indexOf('dec') > -1 || //Include decimal
 		type_.toLowerCase().indexOf('numeric') > -1 ||
 		type_.toLowerCase().indexOf('real') > -1 ||
 		type_.toLowerCase().indexOf('precision') > -1) {
 		sails_attribute_children.push('type: "float"');
+		content_view.type = "number";
 	} else if (type_.toLowerCase().indexOf('enum') > -1) {
 		//sails_attribute_children.push(getEnum(type_));
 	} else if (type_.toLowerCase().indexOf('datetime') > -1 ||
 		type_.toLowerCase().indexOf('timestamp') > -1) {
 		sails_attribute_children.push("type: 'datetime'");
+		content_view.type = "datetime";
 	} else if (type_.toLowerCase().indexOf('date') > -1) {
 		sails_attribute_children.push("type: 'date'");
+		content_view.type = "date";
 	} else if (type_.toLowerCase().indexOf('json') > -1) {
 		sails_attribute_children.push('type: "json"');
+		content_view.type = "textarea";
 	} else if (type_.toLowerCase().indexOf('text') > -1) {
 		sails_attribute_children.push("type: 'text'");
 	} else if (type_.toLowerCase().indexOf('bigint') > -1) { //Include smallint
@@ -176,11 +192,13 @@ function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
 			"type: 'integer',",
 			'size: 20'
 		].join(" "));
+		content_view.type = "number";
 	}
 
 	if (default_value_ != "" && default_value_ != undefined) {
 		if (!default_value_.startsWith("nextval")) { //No contains nextval
 			sails_attribute_children.push("default: " + default_value_);
+			content_view.default_value = default_value_;
 		}
 	}
 
@@ -190,9 +208,15 @@ function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
 		sails_attribute_children.push("required: " + false);
 	}
 
-	sails_attribute.push(attrib.toLowerCase() + ": {" + sails_attribute_children.join(',') + "}");
-	//console.log(attribute);
-	return sails_attribute.toString();
+	var result = {
+		model_content: (attrib.toLowerCase() + ": {" + sails_attribute_children.join(',') + "}"),
+		view_content: content_view
+	}
+
+	//console.log("==>",result.model_content);
+		//sails_attribute.push(attrib.toLowerCase() + ": {" + sails_attribute_children.join(',') + "}");
+		//console.log(attribute);
+	return result;
 };
 
 
