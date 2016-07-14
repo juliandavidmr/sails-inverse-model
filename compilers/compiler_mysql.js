@@ -17,7 +17,6 @@ var mkdir = require("mkdir-promise");
 var Beautifier = require('node-js-beautify');
 var s = require("underscore.string");
 
-
 var plural = require('../configs/plural');
 var to = require('../configs/to');
 
@@ -196,20 +195,27 @@ function getEnum(Type) {
 }
 
 function getOthers(prop) {
-	var out = [];
+	return "";
+
+	//
+	//This is generating errors in the models sailsjs.
+	//
+
+	/*var out = [];
 
 	if (prop["Key"]) {
 		if (prop["Key"].toLowerCase().indexOf("pri") > -1) {
-			out.push("primaryKey: true");
-			out.push("unique: true");
-			out.push("required: true");
+			//out.push("primaryKey: true");
+			//out.push("unique: true");
 		}
 	}
-	/*if (prop["Null"].toLowerCase().indexOf("no") > -1 || prop["Key"]) {}*/
-	if (prop["Extra"].toLowerCase().indexOf("increment") > -1) {
-		out.push("autoIncrement: true");
+	if (prop["Null"].toLowerCase().indexOf("no") > -1) {
+		out.push("required: true");
 	}
-	return out.join(", ");
+	if (prop["Extra"].toLowerCase().indexOf("increment") > -1) {
+		//out.push("autoIncrement: true");
+	}
+	return out.join("");*/
 }
 
 
