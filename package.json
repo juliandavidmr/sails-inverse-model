@@ -46,6 +46,7 @@
   "dependencies": {
     "ansi-styles": "^2.2.1",
     "gencode": "^1.0.3",
+    "handlebars": "^4.0.5",
     "is-os": "^1.0.0",
     "meow": "^3.5.0",
     "mkdir-promise": "^1.0.0",

@@ -1,5 +1,6 @@
 var plural = require('../configs/plural');
 var to = require('../configs/to');
+var view = require('../genviews/view');
 
 var Beautifier = require('node-js-beautify');
 var b = new Beautifier();
@@ -11,7 +12,7 @@ var s = require("underscore.string");
 
 var PostgresSchema = require('pg-json-schema-export');
 
-exports.generate = function(config, folder_models, folder_controllers, plurallang) {
+exports.generate = function(config, folder_models, folder_controllers, folder_views, plurallang) {
 	PostgresSchema.toJSON(config, config.schema)
 		.then(function(schemas) {
 			//console.log(JSON.stringify(schemas, null, 4));
@@ -25,23 +26,29 @@ exports.generate = function(config, folder_models, folder_controllers, plurallan
 				if (schemas.tables.hasOwnProperty(table)) { //confirm data of tables
 					var attrs = schemas.tables[table]["columns"];
 					//console.log(attrs);
-					var attributes_sails = [];
+					var attributes_sails = [], view_contents = [];
 					for (var attr in attrs) { // attributes of a table
 						var name_attribute = attr;
 						var properties_attribute = attrs[attr];
 						//console.log("\n------>>", properties_attribute);
 						var result = transpile(properties_attribute, name_attribute);
 						attributes_sails.push(result.model_content);
-						console.log(">:", result.model_content);
+						view_contents.push(result.view_content);
 					}
+
+					//console.log(view_content);
 
 					Models.push({
 						model_name: plural.pluraliza(s.camelize(table), plurallang).trim(),
-						content: "attributes: { " + (attributes_sails.join(", ")) + " }"
+						content: "attributes: { " + (attributes_sails.join(", ")) + " }",
+						view_content: view_contents
 					});
 				}
 			}
 
+			if (folder_models != "") {
+				view.generate(Models, folder_views);
+			}
 			//console.log(JSON.stringify(Models, null, 4));
 			if (folder_models != "") {
 				saveModels(folder_models, Models, plurallang);
@@ -71,7 +78,7 @@ function saveControllers(dir_folder_controllers, Models, plurallang) {
 	mkdir(dir_folder_controllers).then(() => {
 		Models.map((model) => {
 			var name_c = to.capitalize(plural.pluraliza(model.model_name, plurallang)).trim() + "Controller.js";
-			gencode.save(b.beautify_js(to.saveController(name_c)), dir_folder_controllers, name_c).then((value) => {
+			gencode.save(b.beautify_js(to.saveController(s.camelize(model.model_name))), dir_folder_controllers, name_c).then((value) => {
 				bar2.tick();
 				if (bar2.complete) {
 					console.log('\nComplete Controllers.\n');
@@ -165,7 +172,7 @@ function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
 	} else if (type_.toLowerCase().indexOf('bool') > -1 ||
 		type_.toLowerCase().indexOf('bit') > -1) {
 		sails_attribute_children.push("type: 'boolean'");
-		content_view.type = "boolean";
+		content_view.type = "checkbox";
 	} else if (type_.toLowerCase().indexOf('float') > -1 ||
 		type_.toLowerCase().indexOf('dec') > -1 || //Include decimal
 		type_.toLowerCase().indexOf('numeric') > -1 ||
@@ -208,14 +215,16 @@ function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
 		sails_attribute_children.push("required: " + false);
 	}
 
+	//console.log("=>=>=>=>>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>>=>=>=>=>");
+	//console.log(JSON.stringify(content_view));
+
 	var result = {
 		model_content: (attrib.toLowerCase() + ": {" + sails_attribute_children.join(',') + "}"),
-		view_content: content_view
+		view_content: JSON.stringify(content_view)
 	}
 
 	//console.log("==>",result.model_content);
-		//sails_attribute.push(attrib.toLowerCase() + ": {" + sails_attribute_children.join(',') + "}");
-		//console.log(attribute);
+	//sails_attribute.push(attrib.toLowerCase() + ": {" + sails_attribute_children.join(',') + "}");
 	return result;
 };
 

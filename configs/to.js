@@ -6,6 +6,7 @@
  */
 
 var plural = require('./plural');
+var to = require('../configs/to');
 
 /**
  * [toModel simple json to model sails]
@@ -25,17 +26,26 @@ exports.toModel = function(model_basic) {
 }
 
 exports.saveController = function(name, plurallang) {
-	var content = [];
-	content.push("/**");
-	content.push("* " + name);
-	content.push("*");
-	content.push("* @description :: Server-side logic for managing " + name);
-	content.push("* @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers");
-	content.push("*/");
-	content.push("module.exports = {");
-	content.push("");
-	content.push("};");
-  return content.join("\n");
+	return [
+		"/**",
+		"* " + name,
+		"*",
+		"* @description :: Server-side logic for managing " + name,
+		"* @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers",
+		"*/",
+		"module.exports = {",
+		"index: function(req, res, next) {",
+		"	" + exports.capitalize(name) + ".find().exec(function(err, list) {",
+		"		if (err) return Error('Error');",
+		"		console.log('Mostrando comandos');",
+		"		return res.view({",
+		"			result: list",
+		"		});",
+		"	});",
+		"}",
+		"",
+		"};"
+	].join("\n");
 }
 
 exports.capitalize = function(word) {

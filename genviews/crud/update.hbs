@@ -1,0 +1,18 @@
+<div class="">
+	<h1>Update {{title}}</h1>
+	<h5>By {{author}}</h5>
+
+	<div class="body">
+		<form class="" action="/{{name}}/update" method="put">
+			{{#each elements}}
+				<div class="">
+					<label for="">{{name}}</label>
+					<input type="{{type}}" name="{{name}}" value="">
+				</div>
+			{{/each}}
+			<button type="submit" name="button">Update {{title}}</button>
+		</form>
+	</div>
+
+	<a href="https://www.npmjs.com/package/sails-inverse-model">More info.</a>
+</div>

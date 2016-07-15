@@ -1,0 +1,23 @@
+<h1>{{title}}</h1>
+
+<table>
+  <thead>
+    <tr>
+      {{#each elements}}
+				<th>{{name}}</th>
+			{{/each}}
+    </tr>
+  </thead>
+
+  <tbody>
+    <% result.forEach(function (item) { %>
+      <tr>
+        {{#each elements}}
+          <td><%= item.{{name}} %></td>
+        {{/each}}
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<br>
