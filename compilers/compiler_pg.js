@@ -46,10 +46,11 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 				}
 			}
 
-			if (folder_models != "") {
+			//console.log(JSON.stringify(Models, null, 4));
+
+			if (folder_views != "") {
 				view.generate(Models, folder_views);
 			}
-			//console.log(JSON.stringify(Models, null, 4));
 			if (folder_models != "") {
 				saveModels(folder_models, Models, plurallang);
 			}
@@ -66,9 +67,8 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 
 /**
  * [saveModels save models in the folder Models]
- * @param  {[type]} dir_folder_model [description]
- * @param  {[type]} Models           [description]
- * @return {[type]}                  [description]
+ * @param  {string} dir_folder_model [description]
+ * @param  {array json} Models           [description]
  */
 function saveControllers(dir_folder_controllers, Models, plurallang) {
 	var bar2 = new ProgressBar(':bar', {
@@ -96,15 +96,14 @@ function saveControllers(dir_folder_controllers, Models, plurallang) {
  * [saveModels save models in the folder Models]
  * @param  {string} dir_folder_model [description]
  * @param  {array of models: {model_name & content}} Models           [Array of models postgres]
- * @return {[type]}                  [description]
  */
 function saveModels(dir_folder_model, Models, plurallang) {
 	var bar = new ProgressBar(':bar', {
 		total: Models.length
 	});
 
-	console.log("_____________________________________________________________________________________________");
-	console.log(Models);
+	//console.log("_____________________________________________________________________________________________");
+	//console.log(Models);
 	mkdir(dir_folder_model).then(() => {
 		Models.map((model) => {
 			var name_m = to.capitalize(plural.pluraliza(model.model_name, plurallang)).trim() + ".js";

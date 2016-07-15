@@ -37,7 +37,6 @@ exports.saveController = function(name, plurallang) {
 		"index: function(req, res, next) {",
 		"	" + exports.capitalize(name) + ".find().exec(function(err, list) {",
 		"		if (err) return Error('Error');",
-		"		console.log('Mostrando comandos');",
 		"		return res.view({",
 		"			result: list",
 		"		});",

@@ -6,6 +6,7 @@ var meow = require('meow');
 var ansi = require('ansi-styles');
 
 require('./configs/color');
+require('./configs/route');
 
 var compiler_my = require('./compilers/compiler_mysql');
 var compiler_pg = require('./compilers/compiler_pg');
@@ -13,13 +14,13 @@ var compiler_pg = require('./compilers/compiler_pg');
 var cli = meow([
 	"                .-..-.																												",
 	"																																							",
-	color("  Sails-inverse-model  <|    .-..-.	v. 1.1.3               ", "yellow"),
-	color("                        |\																	 ", "yellow"),
-	color("                       /|.\ 																 ", "yellow"),
-	color("                      / || \																 ", "yellow"),
-	color("                    ,'  |'  \															 ", "yellow"),
-	color("                 .-'.-==|/_--'															 ", "yellow"),
-	color("                 `--'-------' 															 ", "yellow"),
+	color("  Sails-inverse-model  <|    .-..-.	v. 1.1.3                 ", "green"),
+	color("                        |\																	   ", "green"),
+	color("                       /|.\ 																   ", "green"),
+	color("                      / || \																   ", "green"),
+	color("                    ,'  |'  \															   ", "green"),
+	color("                 .-'.-==|/_--'															   ", "green"),
+	color("                 `--'-------' 															   ", "green"),
 	color("    __---___--___---___--___---___--___--___--___					   ", "blue"),
 	color("  ____---___--___---___--___---___--___-__--___--___					 ", "blue"),
 	" 																																						",
@@ -27,22 +28,35 @@ var cli = meow([
 	" :: " + (new Date()) + "																	",
 	" -----------------------------------------------------------------						",
 	'Example:',
+	'  $ mkdir sails-output',
+	'  $ cd sails-output',
+	'  $ sails-inverse-model -u postgres -p root -d almacen -t pg -m -v -c',
 	'',
-	'  $ sails-inverse-model -u root -p root -d independiente -m -c -l es',
-	'User         : root',
+	'User         : postgres',
 	'Password     : root',
-	'Database     : independiente',
+	'Database     : almacen',
 	'Host         : localhost',
 	'Pluralize    : No pluralize',
-	'Models       : /home/julian/Documentos/sailsproject/api/models',
-	'Controllers  : /home/julian/Documentos/sailsproject/api/controllers',
-	'Result:',
-	'9 tables',
-	'=========',
-	'Complete models.',
-	'=========',
+	'Models       : /home/julian/Documents/sails-output/models',
+	'Views        : /home/julian/Documents/sails-output/views',
+	'Controllers  : /home/julian/Documents/sails-output/controllers',
+	'DB           : pg',
+	'Schema (pg)  : public',
+	'=====================================',
+	'Complete views.',
+	'=====================================',
+	'Complete Models.',
+	'=====================================',
 	'Complete Controllers.',
 	'',
+	'    Note: Copy models => your/project_sails/api',
+	'          Copy controllers => your/project_sails/api',
+	'          Copy views => your/project_sails/',
+	' Then: ',
+	' $ cd your/project_sails/',
+	' $ sails lift',
+	'',
+	' More info: https://github.com/juliandavidmr/sails-inverse-model',
 	" -----------------------------------------------------------------						",
 	'Options',
 	'  -u, --user  User of database',
@@ -59,7 +73,7 @@ var cli = meow([
 	//'  --neez  Type of word: yes|no|all  Default: all',
 ]);
 
-console.log(cli);
+//console.log(cli);
 
 var user,
 	pass,
@@ -111,31 +125,19 @@ if (schema == true || schema == "true") {
 //Folder output
 folder_models = cli.flags.m || cli.flags.models;
 if (folder_models == true || folder_models == "true") {
-	if (require('is-os').isWindows()) {
-		folder_models = (process.cwd()) + "\\models";
-	} else {
-		folder_models = (process.cwd()) + "/models";
-	}
+	folder_models = concat(process.cwd(), "models"); // Method concat: see configs/route.js
 }
 
 //Folder Controllers
 folder_controllers = cli.flags.c || cli.flags.controllers;
 if (folder_controllers == true || folder_controllers == "true") {
-	if (require('is-os').isWindows()) {
-		folder_controllers = (process.cwd() + "\\controllers")
-	} else {
-		folder_controllers = (process.cwd() + "/controllers")
-	}
+	folder_controllers = concat(process.cwd(), "controllers"); // Method concat: see configs/route.js
 }
 
 //Folder views
 folder_views = cli.flags.v || cli.flags.views;
 if (folder_views == true || folder_views == "true") {
-	if (require('is-os').isWindows()) {
-		folder_views = (process.cwd()) + "\\views";
-	} else {
-		folder_views = (process.cwd()) + "/views";
-	}
+	folder_views = concat(process.cwd(), "views"); // Method concat: see configs/route.js
 }
 
 //Intelligen
@@ -143,18 +145,18 @@ intelligen = cli.flags.i || cli.flags.intelligen;
 
 if (db && pass && user && host) {
 
-	console.log("User:\t", ansi.green.open + user + ansi.green.close);
-	console.log("Password:", ansi.green.open + pass + ansi.green.close);
-	console.log("Database:", ansi.green.open + db + ansi.green.close);
-	console.log("Host:\t", ansi.green.open + host + ansi.green.close);
-	console.log("Pluralize:", ansi.green.open + (plurallang || "No pluralize") + ansi.green.close);
-	console.log("Models:\t", ansi.green.open + (folder_models || "No generated") + ansi.green.close);
-	console.log("Views:", ansi.green.open + (folder_views || "No generated") + ansi.green.close);
-	console.log("Controllers:", ansi.green.open + (folder_controllers || "No generated") + ansi.green.close);
-	console.log("DB:\t", ansi.green.open + (type) + ansi.green.close);
-	console.log("Schema (pg):", ansi.green.open + (schema) + ansi.green.close);
+	console.log("User         :", color(user, "green"));
+	console.log("Password     :", color(pass, "green"));
+	console.log("Database     :", color(db, "green"));
+	console.log("Host         :", color(host, "green"));
+	console.log("Pluralize    :", color((plurallang || "No pluralize"), "green"));
+	console.log("Models       :", color((folder_models || "No generated"), "green"));
+	console.log("Views        :", color((folder_views || "No generated"), "green"));
+	console.log("Controllers  :", color((folder_controllers || "No generated"), "green"));
+	console.log("DB           :", color((type), "green"));
+	console.log("Schema (pg)  :", color((schema), "green"));
 
-	// Mysql connect config.
+	// Mysql & postgres connect config.
 	var config = {
 		user: user,
 		password: pass,
@@ -166,10 +168,10 @@ if (db && pass && user && host) {
 
 	if (folder_controllers || folder_models || folder_views) {
 		type = type.toLowerCase(); //pg, postgres, mysql
-		if (type.indexOf("pg") > -1 || type.indexOf("postgres") > -1) {
+		if (type.indexOf("pg") != -1 || type.indexOf("postgres") != -1) {
 			config.port = 5432;
 			compiler_pg.generate(config, folder_models, folder_controllers, folder_views, plurallang);
-		} else {
+		} else { //MySQL
 			delete config.schema;
 			compiler_my.generate(config, folder_models, folder_controllers, plurallang);
 		}

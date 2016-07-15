@@ -2,7 +2,7 @@ var Handlebars = require('handlebars');
 var components = require('./components');
 
 
-//Create "layout" html from handlebars, NO USED
+//Create "layout" html from handlebars, NO USED, genera errores y al parecer es en la condificacion del string body
 var layout = function(title, author, body) {
 	return new Promise(function(resolve, reject) {
 		var data_layout = {

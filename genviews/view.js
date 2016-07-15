@@ -1,15 +1,20 @@
 var gencode = require('gencode');
 var ansi = require('ansi-styles');
 var mkdir = require("mkdir-promise");
+var ProgressBar = require('progress');
 
 require('./crud');
 require('../configs/route');
 
 exports.generate = function(Models, folder_views) {
 	mkdir(folder_views).then(() => {
+		var bar3 = new ProgressBar(':bar', {
+			total: Models.length
+		});
+
 		Models.forEach(model => {
 			var route = concat(folder_views, model.model_name);
-			console.log(route);
+			//console.log(route);  // => route: /home/julian/Documentos/Node_Projects/sails-inverse-model/views/namemodel
 			mkdir(route).then(() => {
 				create(model.model_name, "sails-inverse-model", model).then((html) => {
 					//console.log("________>_____________>_____________>>__>____________________");
@@ -38,6 +43,11 @@ exports.generate = function(Models, folder_views) {
 					});
 				});
 			});
+
+			bar3.tick();
+			if (bar3.complete) {
+				console.log('\nComplete views.\n');
+			}
 		});
 	});
 };

@@ -1,5 +1,6 @@
 var ansi = require('ansi-styles');
 
+// Color text with ansi-styles
 color = function(text, color) {
   var color = color.toLowerCase();
   if(color == "white") {

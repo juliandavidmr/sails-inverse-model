@@ -7,11 +7,13 @@
 			{{#each elements}}
 				<div class="">
 					<label for="">{{name}}</label>
-					<input type="{{type}}" name="{{name}}" value="">
+					<input type="{{type}}" name="{{name}}" value="" required="{{required}}">
 				</div>
 			{{/each}}
-			<button type="submit" name="button">Save {{title}}</button>
+			<button type="submit">Save {{title}}</button>
 		</form>
+		<br />
+		<a href="/{{name}}">Index</a>
 	</div>
 
 	<a href="https://www.npmjs.com/package/sails-inverse-model">More info.</a>
