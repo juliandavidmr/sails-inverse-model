@@ -44,8 +44,8 @@ create = function(title, author, model) {
 	});
 };
 
-//Create "update" html from handlebars
-update = function(title, author, model) {
+//Create "edit" html from handlebars
+edit = function(title, author, model) {
 	return new Promise(function(resolve, reject) {
     var data_create = {
       title: title,
@@ -60,7 +60,7 @@ update = function(title, author, model) {
       data_create.elements.push(element)
     });
 
-		components.update(function(hbs) {
+		components.edit(function(hbs) {
 			var template = Handlebars.compile(hbs);
 			var html = template(data_create);
 			//console.log(html);
@@ -86,6 +86,31 @@ index = function(title, author, model) {
     });
 
 		components.index(function(hbs) {
+			var template = Handlebars.compile(hbs);
+			var html = template(data_list);
+			//console.log(html);
+      resolve(html);
+		});
+	});
+};
+
+//Create "show" html from handlebars
+show = function(title, author, model) {
+	return new Promise(function(resolve, reject) {
+    var data_list = {
+      title: title,
+      author: author,
+      name: model.model_name,
+      elements: []
+    };
+
+    model.view_content.map((item) => {
+      var element = JSON.parse(item);
+      //element => '{"required":true,"name":"descripcion","type":"text"}',
+      data_list.elements.push(element)
+    });
+
+		components.show(function(hbs) {
 			var template = Handlebars.compile(hbs);
 			var html = template(data_list);
 			//console.log(html);

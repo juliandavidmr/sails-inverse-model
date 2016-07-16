@@ -27,8 +27,8 @@ exports.generate = function(Models, folder_views) {
 					});
 				});
 
-				update(model.model_name, "sails-inverse-model", model).then((html) => {
-					gencode.save(html, route, "update.ejs").then((value) => {
+				edit(model.model_name, "sails-inverse-model", model).then((html) => {
+					gencode.save(html, route, "edit.ejs").then((value) => {
 						//console.log(value);
 					}, (err) => {
 						console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
@@ -37,6 +37,14 @@ exports.generate = function(Models, folder_views) {
 
 				index(model.model_name, "sails-inverse-model", model).then((html) => {
 					gencode.save(html, route, "index.ejs").then((value) => {
+						//console.log(value);
+					}, (err) => {
+						console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
+					});
+				});
+
+				show(model.model_name, "sails-inverse-model", model).then((html) => {
+					gencode.save(html, route, "show.ejs").then((value) => {
 						//console.log(value);
 					}, (err) => {
 						console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));

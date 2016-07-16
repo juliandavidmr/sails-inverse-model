@@ -4,6 +4,7 @@
   "description": "Generate models, controllers and views (MVC) for Sails.js from the database any.",
   "license": "MIT",
   "repository": "https://github.com/juliandavidmr/sails-inverse-model",
+  "main": "index.js",
   "bin": {
     "sails-inverse-model": "cli.js"
   },

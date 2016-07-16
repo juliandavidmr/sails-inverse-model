@@ -1,4 +1,5 @@
 var fs = require('fs');
+require('../configs/route');
 
 // content input.hbs
 exports.layout = function(callback) {
@@ -22,15 +23,22 @@ exports.index = function(callback) {
 }
 
 // content update.hbs
-exports.update = function(callback) {
-	return read("/crud/update.hbs", function(content) {
+exports.edit = function(callback) {
+	return read("/crud/edit.hbs", function(content) {
+		callback(content);
+	});
+}
+
+// content show.hbs
+exports.show = function(callback) {
+	return read("/crud/show.hbs", function(content) {
 		callback(content);
 	});
 }
 
 //Read file hbs and return code
 function read(name, callback) {
-	fs.readFile(__dirname + "/" + name, 'utf8', (err, data) => {
+	fs.readFile(concat(__dirname, name), 'utf8', (err, data) => {
 		if (err) throw err;
 		callback(data.toString());
 	});

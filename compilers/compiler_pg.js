@@ -133,6 +133,8 @@ function transpile(attributes, name_attribute) {
 	var default_value_ = attributes["column_default"];
 	var is_nullable_ = attributes["is_nullable"];
 
+	//console.log(JSON.stringify(attributes));
+
 	//console.log("TYPE:", type_);
 	//console.log("COLUMN:", column_name_);
 	//console.log("DEFAULT:", default_value_);
