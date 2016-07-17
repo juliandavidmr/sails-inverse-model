@@ -50,11 +50,16 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 					});
 				}
 			}
+
+			for (var constraint in schemas.constraints) {
+				console.log(JSON.stringify(constraint));
+			}
+
 			console.log([Models.length, "tables"].join(" "));
 
 			//console.log(JSON.stringify(Models, null, 4));
 
-			if (folder_models != "" && folder_models) {
+/*			if (folder_models != "" && folder_models) {
 				saveModels(folder_models, Models, plurallang);
 			}
 			if (folder_controllers != "" && folder_controllers) {
@@ -62,7 +67,7 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 			}
 			if (folder_views != "" && folder_views) {
 				view.generate(Models, folder_views);
-			}
+			}*/
 		})
 		.catch(function(error) {
 			console.log(error);
@@ -179,16 +184,6 @@ function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
 };
 
 
-/**
- * =============================================================================
- * 															Testing
- */
-/*var config = {
-	user: 'postgres',
-	password: 'root',
-	host: 'localhost',
-	port: 5432,
-	database: 'almacen'
+function foreignkeys(constraints) {
+
 }
-*/
-//exports.generate(config, "any folder", "any folder 2", "en");
