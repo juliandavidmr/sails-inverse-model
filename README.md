@@ -4,11 +4,11 @@
 
 [![Build Status](https://travis-ci.org/juliandavidmr/sails-inverse-model.svg?branch=master)](https://travis-ci.org/juliandavidmr/sails-inverse-model)
 
-## Sails-inverse-model is an module that helps you generate models, controllers and views SailsJS from a database any.
+## Sails-inverse-model is an module that helps you generate models, controllers and views SailsJS from a any database.
 
 > Available for PostgreSQL and MySQL :)
 
-This npm also provides all the functions necessary to convert between different data types.
+This NPM also provides all the functions necessary to convert between different data types.
 
 - [Installation](#installation)
 - [Usage](#Usage)

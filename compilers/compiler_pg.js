@@ -59,7 +59,7 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 
 			//console.log(JSON.stringify(Models, null, 4));
 
-/*			if (folder_models != "" && folder_models) {
+			if (folder_models != "" && folder_models) {
 				saveModels(folder_models, Models, plurallang);
 			}
 			if (folder_controllers != "" && folder_controllers) {
@@ -67,7 +67,7 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 			}
 			if (folder_views != "" && folder_views) {
 				view.generate(Models, folder_views);
-			}*/
+			}
 		})
 		.catch(function(error) {
 			console.log(error);
