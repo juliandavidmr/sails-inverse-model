@@ -2,7 +2,6 @@ var ProgressBar = require('progress');
 var plural = require('../configs/plural');
 var to = require('../configs/to');
 
-
 var gencode = require('gencode');
 var mkdir = require("mkdir-promise");
 var s = require("underscore.string");

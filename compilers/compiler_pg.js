@@ -26,7 +26,6 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 
 			//Tables
 			for (var table in schemas.tables) {
-				//console.log("-----------------------------------------------------------");
 				//console.log("Table: ", table);
 
 				if (schemas.tables.hasOwnProperty(table)) { //confirm data of tables
@@ -55,14 +54,14 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 
 			//console.log(JSON.stringify(Models, null, 4));
 
-			if (folder_views != "") {
-				view.generate(Models, folder_views);
-			}
-			if (folder_models != "") {
+			if (folder_models != "" && folder_models) {
 				saveModels(folder_models, Models, plurallang);
 			}
-			if (folder_controllers != "") {
+			if (folder_controllers != "" && folder_controllers) {
 				saveControllers(folder_controllers, Models, plurallang);
+			}
+			if (folder_views != "" && folder_views) {
+				view.generate(Models, folder_views);
 			}
 		})
 		.catch(function(error) {

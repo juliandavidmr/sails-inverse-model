@@ -54,13 +54,13 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 
 			//console.log(Models);
 
-			if (folder_views != "") {
+			if (folder_views != "" && folder_views) {
 				view.generate(Models, folder_views);
 			}
-			if (folder_models != "") {
+			if (folder_models != "" && folder_models) {
 				saveModels(folder_models, Models, plurallang);
 			}
-			if (folder_controllers != "") {
+			if (folder_controllers != "" && folder_controllers) {
 				saveControllers(folder_controllers, Models, plurallang);
 			}
 		}
