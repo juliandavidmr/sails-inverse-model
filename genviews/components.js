@@ -1,13 +1,6 @@
 var fs = require('fs');
 require('../configs/route');
 
-// content input.hbs
-exports.layout = function(callback) {
-	return read("/crud/layout.hbs", function(content) {
-		callback(content);
-	});
-}
-
 // content create.hbs
 exports.create = function(callback) {
 	return read("/crud/create.hbs", function(content) {

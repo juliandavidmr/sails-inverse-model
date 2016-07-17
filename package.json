@@ -22,7 +22,8 @@
     "index.js",
     "cli.js",
     "compilers/",
-    "configs/"
+    "configs/",
+    "genviews/"
   ],
   "keywords": [
     "cli-app",
@@ -31,6 +32,9 @@
     "sails",
     "generator",
     "model",
+    "controller",
+    "views",
+    "hbs",
     "json",
     "mysql",
     "prompt",

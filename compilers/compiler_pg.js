@@ -1,14 +1,20 @@
+/**
+ * compiler_mysql.js
+ * @autor Julian David (@anlijudavid)
+ * 2016
+ *
+ * Process mysql to models waterline
+ */
+
+'use strict';
+
+var ProgressBar = require('progress');
+var s = require("underscore.string");
+
 var plural = require('../configs/plural');
 var to = require('../configs/to');
 var view = require('../genviews/view');
-
-var Beautifier = require('node-js-beautify');
-var b = new Beautifier();
-
-var ProgressBar = require('progress');
-var gencode = require('gencode');
-var mkdir = require("mkdir-promise");
-var s = require("underscore.string");
+require('./save');
 
 var PostgresSchema = require('pg-json-schema-export');
 
@@ -45,6 +51,7 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 					});
 				}
 			}
+			console.log([Models.length, "tables"].join(" "));
 
 			//console.log(JSON.stringify(Models, null, 4));
 
@@ -63,63 +70,6 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 			// handle error
 		});
 };
-
-
-/**
- * [saveModels save models in the folder Models]
- * @param  {string} dir_folder_model [description]
- * @param  {array json} Models           [description]
- */
-function saveControllers(dir_folder_controllers, Models, plurallang) {
-	var bar2 = new ProgressBar(':bar', {
-		total: Models.length
-	});
-
-	mkdir(dir_folder_controllers).then(() => {
-		Models.map((model) => {
-			var name_c = to.capitalize(plural.pluraliza(model.model_name, plurallang)).trim() + "Controller.js";
-			gencode.save(b.beautify_js(to.saveController(s.camelize(model.model_name))), dir_folder_controllers, name_c).then((value) => {
-				bar2.tick();
-				if (bar2.complete) {
-					console.log('\nComplete Controllers.\n');
-				}
-			}, (err) => {
-				console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
-			});
-		});
-	}, function(ex) {
-		console.error(ex);
-	});
-}
-
-/**
- * [saveModels save models in the folder Models]
- * @param  {string} dir_folder_model [description]
- * @param  {array of models: {model_name & content}} Models           [Array of models postgres]
- */
-function saveModels(dir_folder_model, Models, plurallang) {
-	var bar = new ProgressBar(':bar', {
-		total: Models.length
-	});
-
-	//console.log("_____________________________________________________________________________________________");
-	//console.log(Models);
-	mkdir(dir_folder_model).then(() => {
-		Models.map((model) => {
-			var name_m = to.capitalize(plural.pluraliza(model.model_name, plurallang)).trim() + ".js";
-			gencode.save(b.beautify_js(to.toModel(model.content)), dir_folder_model, name_m).then((value) => {
-				bar.tick();
-				if (bar.complete) {
-					console.log('\nComplete Models.\n');
-				}
-			}, (err) => {
-				console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
-			});
-		});
-	}, function(ex) {
-		console.error(ex);
-	});
-}
 
 /**
  * [transpile: convert all attributes postgres to sailsjs]

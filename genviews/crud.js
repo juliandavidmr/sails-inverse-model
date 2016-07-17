@@ -2,23 +2,6 @@ var Handlebars = require('handlebars');
 var components = require('./components');
 
 
-//Create "layout" html from handlebars, NO USED, genera errores y al parecer es en la condificacion del string body
-var layout = function(title, author, body) {
-	return new Promise(function(resolve, reject) {
-		var data_layout = {
-			title: title,
-			author: author,
-			body: body
-		};
-		components.layout(function(hbs) {
-			var template = Handlebars.compile(hbs);
-			var html = template(data_layout);
-			//console.log(html);
-			resolve(html);
-		});
-	});
-};
-
 //Create "create" html from handlebars
 create = function(title, author, model) {
 	return new Promise(function(resolve, reject) {
@@ -122,6 +105,7 @@ show = function(title, author, model) {
 
 
 /*
+EXAMPLE:
 {
 	model_name: 'tareasNoRealizadas',
 	content: 'attributes: { id_tarea: {type: \'integer\',required: true}, descripcion: {type: \'string\',required: true}, fecha_registro: {type: \'datetime\',required: true}, fecha_realizado: {type: \'datetime\',required: true}, realizado: {type: \'boolean\',required: true}, fk_persona_empleado: {type: \'integer\',required: true}, categoria: {type: \'string\',required: true} }',

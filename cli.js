@@ -12,17 +12,17 @@ var compiler_my = require('./compilers/compiler_mysql');
 var compiler_pg = require('./compilers/compiler_pg');
 
 var cli = meow([
-	"                .-..-.																												",
+	color("                .-..-.																		      ", "blue"),
 	"																																							",
-	color("  Sails-inverse-model  <|    .-..-.	v. 1.1.3                 ", "green"),
+	color("Sails", "yellow") + color("-inverse", "blue") + color("-model", "red") + color("    <|    .-..-.	v. 1.1.3                 ", "green"),
 	color("                        |\																	   ", "green"),
-	color("                       /|.\ 																   ", "green"),
-	color("                      / || \																   ", "green"),
-	color("                    ,'  |'  \															   ", "green"),
+	color("        ~    ~   ~     /|.\ 																   ", "green"),
+	color("           ~  ~       / || \																   ", "green"),
+	color("             ~  ~   ,'  |'  \															   ", "green"),
 	color("                 .-'.-==|/_--'															   ", "green"),
 	color("                 `--'-------' 															   ", "green"),
-	color("    __---___--___---___--___---___--___--___--___					   ", "blue"),
-	color("  ____---___--___---___--___---___--___-__--___--___					 ", "blue"),
+	color("    __--___--___---___---___--___---___--___      					   ", "blue"),
+	color("  ____---___--___---___--___---___--___-__---___      				 ", "blue"),
 	" 																																						",
 	" -----------------------------------------------------------------						",
 	" :: " + (new Date()) + "																	",
@@ -49,9 +49,9 @@ var cli = meow([
 	'=====================================',
 	'Complete Controllers.',
 	'',
-	'    Note: Copy models => your/project_sails/api',
+	'    Note: Copy models      => your/project_sails/api',
 	'          Copy controllers => your/project_sails/api',
-	'          Copy views => your/project_sails/',
+	'          Copy views/*     => your/project_sails/views/',
 	' Then: ',
 	' $ cd your/project_sails/',
 	' $ sails lift',
@@ -65,7 +65,7 @@ var cli = meow([
 	'  -h, --host         Host server 	            Default: localhost',
 	'  -m, --models       Folder output models	    Default: Folder actual',
 	'  -c, --controllers  Folder output	controllers Default: Folder actual',
-	'  -v, --views        Folder output	views       Default: Folder actual ' + color('(Experimental only PostgreSQL)', 'yellow'),
+	'  -v, --views        Folder output	views       Default: Folder actual ' + color('(Experimental)', 'yellow'),
 	'  -l, --lang         Pluralize models and controllers: es|en|fr  Default: no pluralize',
 	'  -t, --type         Type gestor database: mysql|postgres        Default: mysql',
 	'  -s, --schema       Schema of database postgres: Default: public (Only PostgreSQL)',
@@ -151,7 +151,7 @@ if (db && pass && user && host) {
 	console.log("Host         :", color(host, "green"));
 	console.log("Pluralize    :", color((plurallang || "No pluralize"), "green"));
 	console.log("Models       :", color((folder_models || "No generated"), "green"));
-	console.log("Views        :", color((folder_views || "No generated"), "green"));
+	console.log("Views        :", color((folder_views || "No generated."), "green"));
 	console.log("Controllers  :", color((folder_controllers || "No generated"), "green"));
 	console.log("DB           :", color((type), "green"));
 	console.log("Schema (pg)  :", color((schema), "green"));
@@ -173,7 +173,7 @@ if (db && pass && user && host) {
 			compiler_pg.generate(config, folder_models, folder_controllers, folder_views, plurallang);
 		} else { //MySQL
 			delete config.schema;
-			compiler_my.generate(config, folder_models, folder_controllers, plurallang);
+			compiler_my.generate(config, folder_models, folder_controllers, folder_views, plurallang);
 		}
 	} else {
 		console.log("\nPress:\t", ansi.yellow.open + "sails-inverse-model --help" + ansi.yellow.close);

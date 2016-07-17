@@ -1,7 +1,6 @@
 /**
- * to.js
+ * compiler_mysql.js
  * @autor Julian David (@anlijudavid)
- * @version 1.0.0
  * 2016
  *
  * Process mysql to models waterline
@@ -19,122 +18,125 @@ var s = require("underscore.string");
 
 var plural = require('../configs/plural');
 var to = require('../configs/to');
+var view = require('../genviews/view');
 
 var b = new Beautifier();
+require('./save');
 
-exports.generate = function(config, folder_models, folder_controllers, plurallang) {
+exports.generate = function(config, folder_models, folder_controllers, folder_views, plurallang) {
 	// Describe connected database
 	mysqldesc(config, function(err, data) {
 		if (err) {
 			console.log("ERROR: ", err);
 		} else {
-			var Models = [],
-				cantidad = 0;
-			for (var tt in data) { // tt: Name table
-				Models.push(s.camelize(tt));
-				cantidad++;
-			}
-			console.log([cantidad, "tables"].join(" "));
+			var Models = [];
 
-			if (folder_models) {
-				var bar_models = new ProgressBar(':bar', {
-					total: cantidad
-				});
-
-				mkdir(folder_models).then(function() {
-					for (var table in data) { // table: Name table
-						var salida = "";
-						if (data.hasOwnProperty(table)) {
-							//console.log(table + " = " + JSON.stringify(data[table], null, 4));
-							salida = salida.concat("attributes: {");
-							for (var colum in data[table]) {
-								salida += exports.toSailsAttribute(data[table][colum], colum) + ", ";
-							}
-							salida = exports.quitComma(salida).concat("} ");
-						}
-						var model = salida.replace('\\', '');
-
-						var file = to.capitalize((plural.pluraliza(table, plurallang)) + ".js");
-						//console.log(file);
-						gencode.save(b.beautify_js(to.toModel(model)), folder_models, s.camelize(file)).then((value) => {
-							//console.log([ansi.green.open, table + "> ", value, ansi.green.close].join(" "));
-							//console.log(file);
-							bar_models.tick();
-							if (bar_models.complete) {
-								console.log('\nComplete models.\n');
-							}
-						}, (err) => {
-							console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
-						});
+			for (var table in data) { // table: Name table
+				if (data.hasOwnProperty(table)) {
+					//console.log(table + " = " + JSON.stringify(data[table], null, 4));
+					var attributes_sails = [], view_contents = [];
+					for (var colum in data[table]) {
+						var attributes = data[table][colum];
+						var result = transpile(attributes, colum);
+						view_contents.push(result.view_content);
+						attributes_sails.push(result.model_content);
 					}
+				}
 
-				}, function(ex) {
-					console.error(ex);
+				Models.push({
+					model_name: plural.pluraliza(s.camelize(table), plurallang).trim(),
+					content: "attributes: { " + (attributes_sails) + " }",
+					view_content: view_contents
 				});
 			}
 
-			if (folder_controllers) {
-				var bar = new ProgressBar(':bar', {
-					total: cantidad
-				});
+			console.log([Models.length, "tables"].join(" "));
 
-				mkdir(folder_controllers).then(function() {
-					Models.map((item, i) => { //Item name table
-						//console.log("Tabla " + i + ">\n" + item);
-						var name_c = to.capitalize(plural.pluraliza(item, plurallang)).trim() + "Controller.js";
-						gencode.save(b.beautify_js(to.saveController(name_c, plurallang)), folder_controllers, name_c).then((value) => {
-							bar.tick();
-							if (bar.complete) {
-								console.log('\nComplete Controllers.\n');
-							}
-						}, (err) => {
-							console.log([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
-						});
-					});
-				}, function(ex) {
-					console.error(ex);
-				});
+			//console.log(Models);
+
+			if (folder_views != "") {
+				view.generate(Models, folder_views);
+			}
+			if (folder_models != "") {
+				saveModels(folder_models, Models, plurallang);
+			}
+			if (folder_controllers != "") {
+				saveControllers(folder_controllers, Models, plurallang);
 			}
 		}
 	});
-
 };
 
-exports.toSailsAttribute = function(prop, attrib) {
-	var attribute = attrib.toLowerCase() + ": {";
-	var size, type, required, primarykey, unique, autoincrement, vdefault;
+/**
+ * [transpile: convert all attributes postgres to sailsjs]
+ * @param  {[type]} attributes     [description]
+ * @param  {[type]} name_attribute [description]
+ * @return {[type]}                [description]
+ */
+function transpile(attributes, name_attribute) {
+	//console.log(attributes);
+	var type_ = attributes["Type"];
+	var default_value_ = attributes["default"];
+	var is_nullable_ = attributes["Null"];
+
+	//console.log(JSON.stringify(attributes));
+
+	//console.log("TYPE:", type_);
+	//console.log("COLUMN:", column_name_);
+	//console.log("DEFAULT:", default_value_);
+
+	return toSailsAttribute(type_, name_attribute, default_value_, is_nullable_);
+}
+
+function toSailsAttribute(Type, attrib, default_value_, is_nullable_) {
+	var content_view = {
+		required: true,
+		default_value: default_value_,
+		name: attrib,
+		type: undefined
+	};
 	//console.log(attrib);
-	if (prop.Type.toLowerCase().indexOf('varchar') > -1
-			|| prop.Type.toLowerCase().indexOf('time') > -1) {
-		attribute = attribute.concat(getString(prop.Type));
-	} else if (prop.Type.toLowerCase().indexOf('int') > -1 ||
-		prop.Type.toLowerCase().indexOf('small') > -1) { //Include smallint
-		attribute = attribute.concat(getInteger(prop.Type));
-	} else if (prop.Type.toLowerCase().indexOf('bool') > -1 ||
-		prop.Type.toLowerCase().indexOf('bit') > -1) {
-		attribute = attribute.concat(getBoolean());
-	} else if (prop.Type.toLowerCase().indexOf('float') > -1 ||
-		prop.Type.toLowerCase().indexOf('dec') > -1 || //Include decimal
-		prop.Type.toLowerCase().indexOf('numeric') > -1 ||
-		prop.Type.toLowerCase().indexOf('real') > -1 ||
-		prop.Type.toLowerCase().indexOf('precicion') > -1) {
-		attribute = attribute.concat(getFloat());
-	} else if (prop.Type.toLowerCase().indexOf('enum') > -1) {
-		attribute = attribute.concat(getEnum(prop.Type));
-	} else if (prop.Type.toLowerCase().indexOf('text') > -1) {
-		attribute = attribute.concat(getText());
-	} else if (prop.Type.toLowerCase().indexOf('datetime') > -1) {
-		attribute = attribute.concat(getDateTime());
-	} else if (prop.Type.toLowerCase().indexOf('date') > -1
-		|| prop.Type.toLowerCase().indexOf('year') > -1) {
-		attribute = attribute.concat(getDate());
+	var attribute = [];
+	if (Type.toLowerCase().indexOf('varchar') > -1 ||
+		Type.toLowerCase().indexOf('time') > -1) {
+		attribute.push(getString(Type));
+		content_view.type = "text";
+	} else if (Type.toLowerCase().indexOf('int') > -1 ||
+		Type.toLowerCase().indexOf('small') > -1) { //Include smallint
+		attribute.push(getInteger(Type));
+		content_view.type = "number";
+	} else if (Type.toLowerCase().indexOf('bool') > -1 ||
+		Type.toLowerCase().indexOf('bit') > -1) {
+		attribute.push(getBoolean());
+		content_view.type = "checkbox";
+	} else if (Type.toLowerCase().indexOf('float') > -1 ||
+		Type.toLowerCase().indexOf('dec') > -1 || //Include decimal
+		Type.toLowerCase().indexOf('numeric') > -1 ||
+		Type.toLowerCase().indexOf('real') > -1 ||
+		Type.toLowerCase().indexOf('precicion') > -1) {
+		attribute.push(getFloat());
+		content_view.type = "number";
+	} else if (Type.toLowerCase().indexOf('enum') > -1) {
+		attribute.push(getEnum(Type));
+		content_view.type = "text";
+	} else if (Type.toLowerCase().indexOf('text') > -1) {
+		attribute.push(getText());
+		content_view.type = "text";
+	} else if (Type.toLowerCase().indexOf('datetime') > -1) {
+		attribute.push(getDateTime());
+		content_view.type = "datetime";
+	} else if (Type.toLowerCase().indexOf('date') > -1 ||
+		Type.toLowerCase().indexOf('year') > -1) {
+		attribute.push(getDate());
+		content_view.type = "date";
 	}
 
-	attribute = attribute.concat(", " + getOthers(prop));
-
-	attribute = attribute.concat("}");
 	//console.log(attribute);
-	return attribute;
+	var result = {
+		model_content: (attrib.toLowerCase() + ": {" + attribute.join(',') + "}"),
+		view_content: JSON.stringify(content_view)
+	}
+	return result;
 };
 
 function getString(Type) {
@@ -193,31 +195,6 @@ function getEnum(Type) {
 	//out.push("required: true");
 	return "enum: [" + quitComma(out.join(",")) + "]";
 }
-
-function getOthers(prop) {
-	return "";
-
-	//
-	//This is generating errors in the models sailsjs.
-	//
-
-	/*var out = [];
-
-	if (prop["Key"]) {
-		if (prop["Key"].toLowerCase().indexOf("pri") > -1) {
-			//out.push("primaryKey: true");
-			//out.push("unique: true");
-		}
-	}
-	if (prop["Null"].toLowerCase().indexOf("no") > -1) {
-		out.push("required: true");
-	}
-	if (prop["Extra"].toLowerCase().indexOf("increment") > -1) {
-		//out.push("autoIncrement: true");
-	}
-	return out.join("");*/
-}
-
 
 function quitComma(str) {
 	if (str.trim().endsWith(",")) {
