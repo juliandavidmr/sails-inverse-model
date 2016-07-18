@@ -26,7 +26,7 @@ var tablas = [];
 exports.escanear('jjjj');*/
 
 
-gencode.utils.toArray('../test/script.sql', 'utf8', '\n').then((value) => { //Too: \n, \t, -, etc.
+gencode.utils.toArray('../test/new.sql', 'utf8', '\n').then((value) => { //Too: \n, \t, -, etc.
 	var allData = "";
 	var tables = [],
 		dataValid = [];
@@ -59,6 +59,7 @@ function verifyContains(item) {
 	var result = "";
 	var state = true;
 	var start, end = 0;
+	var add;
 	for (var i = 0; i < data.contains.length; i++) {
 		result = "";
 		state = true;
@@ -66,7 +67,12 @@ function verifyContains(item) {
 			start = item.indexOf(data.contains[i]);
 			if (start != -1) {
 				end = item.substring(start, item.length).indexOf(")") + start;
-				result += item.substring(0, start) + (item.substring(start, end).replace(",", "-"));
+				result += item.substring(0, start);
+				add = item.substring(start, end);
+				while (add.indexOf(",") != -1) {
+					add = add.replace(",", "-");
+				}
+				result += add;
 				item = item.substring(end, item.length);
 			} else {
 				state = false;
@@ -95,10 +101,6 @@ function getTableName(item) {
 	return name;
 }
 
-function splitAtributes(item) {
-	return "";
-}
-
 function isAtribute(line) {
 	for (var j = 0; j < data.attr.length; j++) {
 		if (line.toString().trim().startsWith(data.attr[j])) {
@@ -114,7 +116,6 @@ function getAtributes(item) {
 	var atributes = [];
 	var lines = item.split(',');
 	var split;
-
 	for (var i = 0; i < lines.length; i++) {
 		lines[i] = lines[i].replace("not null", "not_null");
 		if (isAtribute(lines[i])) {
@@ -168,15 +169,15 @@ function getTablesJSON(tables) {
 	for (var i = 0; i < tables.length; i++) {
 		item = tables[i].toString().toLowerCase();
 		tables[i] = cleanItem(item);
-		console.log("First: " + tables[i]);
-		console.log('-----------------------------');
-		console.log('');
+
 		tablesJSON.push({
 			table_name: getTableName(tables[i]),
 			atr: getAtributes(tables[i])
 		})
 	}
 	/*var atributos = [];*/
+	console.log("Yilver");
+	console.log("d: " + tablesJSON.length);
 	console.log(JSON.stringify(tablesJSON, null, 4));
 }
 

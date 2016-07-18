@@ -31,7 +31,8 @@
 	],
 	"contains": [
 		"enum(",
-    "primary key ("
+    "primary key (",
+		"unique key"
 	],
 	"attr": [
 		"primary key (",
