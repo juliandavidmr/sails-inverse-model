@@ -19,9 +19,12 @@ var s = require("underscore.string");
 var plural = require('../configs/plural');
 var to = require('../configs/to');
 var view = require('../genviews/view');
+var async = require("async");
 
 var b = new Beautifier();
 require('./save');
+
+var FK_IDENTIFIER = "id";
 
 exports.generate = function(config, folder_models, folder_controllers, folder_views, plurallang) {
 	// Describe connected database
@@ -31,50 +34,66 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 		} else {
 			var Models = [];
 
-			for (var table in data) { // table: Name table
-				if (data.hasOwnProperty(table)) {
-					console.log(table + " = " + JSON.stringify(data[table], null, 4));
-					var attributes_sails = [], view_contents = [];
-					for (var colum in data[table]) {
-						var attributes = data[table][colum];
-						var result = transpile(attributes, colum);
-						view_contents.push(result.view_content);
-						attributes_sails.push(result.model_content);
+			async.forEachOf(data, 
+				function(value, table, callback) {
+					if (data.hasOwnProperty(table)) {
+						console.log("Generating " + table + " table ...");
+						var attributes_sails = [], view_contents = [];
+						mysqldesc.keyColumnUsage(config, config.database, table, function (err, data2) {
+							for (var colum in data[table]) {
+								//console.log(table + "=>" + colum);
+								var reference_fk = undefined;
+								if(data2[colum]) {// && data2[colum]["REFERENCED_TABLE_NAME"]) {
+									reference_fk = {
+										table: data2[colum].REFERENCED_TABLE_NAME,
+										column: data2[colum].REFERENCED_COLUMN_NAME
+									}
+									console.log(table + "=>" + JSON.stringify(data2[colum], null, 4));
+								}
+								var attributes = data[table][colum];
+								//console.log(attributes);
+								var result = transpile(attributes, colum, reference_fk);
+								view_contents.push(result.view_content);
+								attributes_sails.push(result.model_content);
+							}
+							//console.log("-------------");
+							Models.push({
+								model_name: plural.pluraliza(s.camelize(table), plurallang).trim(),
+								content: "attributes: { " + (attributes_sails) + " }",
+								view_content: view_contents
+							});
+							//console.log(table + " = " + JSON.stringify(table, null, 4));
+							callback(null, table);
+						});
 					}
-				}
+				}, function(err) {
+					console.log([Models.length, "tables"].join(" "));
 
-				Models.push({
-					model_name: plural.pluraliza(s.camelize(table), plurallang).trim(),
-					content: "attributes: { " + (attributes_sails) + " }",
-					view_content: view_contents
+					//console.log(Models);
+
+					if (folder_views != "" && folder_views) {
+						view.generate(Models, folder_views);
+					}
+					if (folder_models != "" && folder_models) {
+						saveModels(folder_models, Models, plurallang);
+					}
+					if (folder_controllers != "" && folder_controllers) {
+						saveControllers(folder_controllers, Models, plurallang);
+					}
 				});
-			}
-
-			console.log([Models.length, "tables"].join(" "));
-
-			//console.log(Models);
-
-			if (folder_views != "" && folder_views) {
-				view.generate(Models, folder_views);
-			}
-			if (folder_models != "" && folder_models) {
-				saveModels(folder_models, Models, plurallang);
-			}
-			if (folder_controllers != "" && folder_controllers) {
-				saveControllers(folder_controllers, Models, plurallang);
-			}
 		}
 	});
 };
 
 /**
  * [transpile: convert all attributes postgres to sailsjs]
- * @param  {[type]} attributes     [description]
- * @param  {[type]} name_attribute [description]
- * @return {[type]}                [description]
+ * @param  {[type]} attributes     	[description]
+ * @param  {[type]} name_attribute 	[description]
+ * @param  {[type]} reference_fk 	[description]
+ * @return {[type]}                	[description]
  */
-function transpile(attributes, name_attribute) {
-	//console.log(attributes);
+function transpile(attributes, name_attribute, reference_fk) {
+	//console.log("attributes " + JSON.stringify(attributes, null, 4));
 	var type_ = attributes["Type"];
 	var default_value_ = attributes["Default"];
 	var is_nullable_ = attributes["Null"];
@@ -86,10 +105,10 @@ function transpile(attributes, name_attribute) {
 	//console.log("COLUMN:", column_name_);
 	//console.log("DEFAULT:", default_value_);
 
-	return toSailsAttribute(type_, name_attribute, default_value_, is_nullable_, key_);
+	return toSailsAttribute(type_, name_attribute, default_value_, is_nullable_, key_, reference_fk);
 }
 
-function toSailsAttribute(Type, attrib, default_value_, is_nullable_, key_) {
+function toSailsAttribute(Type, attrib, default_value_, is_nullable_, key_, reference_fk) {
 	var content_view = {
 		required: true,
 		default_value: default_value_,
@@ -133,14 +152,20 @@ function toSailsAttribute(Type, attrib, default_value_, is_nullable_, key_) {
 		content_view.type = "date";
 	}
 	if(key_ === "PRI") {
-		attribute.push("primaryKey: true");
+		attribute.push(getPK());
 	} else if (key_ === "MUL") {
-
+		// TODO: Nothing now
+		if(reference_fk) {
+			attrib = attrib.replace(FK_IDENTIFIER, "");
+			//attrib = reference_fk.table;
+			//attribute.push('model: ' + reference_fk.table);
+			attribute = ['model: "' + reference_fk.table + '"'];
+		}
 	} else if (key_ === "UNI") {
-		attribute.push("unique: true");
+		attribute.push(getUnique());
 	}
 	if(is_nullable_ === "NO") {
-		attribute.push("required: true");
+		attribute.push(getRequired());
 	}
 	if(default_value_ !== "" && !default_value_ && default_value_ !== null) {
 		var def = "defaultsTo: ";
@@ -158,6 +183,18 @@ function toSailsAttribute(Type, attrib, default_value_, is_nullable_, key_) {
 	}
 	return result;
 };
+
+function getPK() {
+	return "primaryKey: true";
+}
+
+function getRequired() {
+	return "required: true";
+}
+
+function getUnique() {
+	return "unique: true";
+}
 
 function getString(Type) {
 	var out = [];
