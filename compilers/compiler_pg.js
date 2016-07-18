@@ -51,9 +51,9 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 				}
 			}
 
-			for (var constraint in schemas.constraints) {
+			/*for (var constraint in schemas.constraints) {
 				console.log(JSON.stringify(constraint));
-			}
+			}*/
 
 			console.log([Models.length, "tables"].join(" "));
 
