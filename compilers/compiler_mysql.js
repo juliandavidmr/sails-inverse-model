@@ -43,12 +43,12 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 							for (var colum in data[table]) {
 								//console.log(table + "=>" + colum);
 								var reference_fk = undefined;
-								if(data2[colum]) {// && data2[colum]["REFERENCED_TABLE_NAME"]) {
+								if(data2[colum]) && data2[colum]["REFERENCED_TABLE_NAME"]) {
 									reference_fk = {
 										table: data2[colum].REFERENCED_TABLE_NAME,
 										column: data2[colum].REFERENCED_COLUMN_NAME
 									}
-									console.log(table + "=>" + JSON.stringify(data2[colum], null, 4));
+									//console.log(table + "=>" + JSON.stringify(data2[colum], null, 4));
 								}
 								var attributes = data[table][colum];
 								//console.log(attributes);
