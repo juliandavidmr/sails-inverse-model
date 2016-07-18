@@ -52,6 +52,7 @@ saveModels = function(dir_folder_model, Models, plurallang) {
 	//console.log(Models);
 	mkdir(dir_folder_model).then(() => {
 		Models.map((model) => {
+			//console.log(model);
 			var name_m = to.capitalize(plural.pluraliza(model.model_name, plurallang)).trim() + ".js";
 			gencode.save(b.beautify_js(to.toModel(model.content)), dir_folder_model, name_m).then((value) => {
 				bar.tick();

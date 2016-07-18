@@ -33,7 +33,7 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 
 			for (var table in data) { // table: Name table
 				if (data.hasOwnProperty(table)) {
-					//console.log(table + " = " + JSON.stringify(data[table], null, 4));
+					console.log(table + " = " + JSON.stringify(data[table], null, 4));
 					var attributes_sails = [], view_contents = [];
 					for (var colum in data[table]) {
 						var attributes = data[table][colum];
@@ -76,8 +76,9 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 function transpile(attributes, name_attribute) {
 	//console.log(attributes);
 	var type_ = attributes["Type"];
-	var default_value_ = attributes["default"];
+	var default_value_ = attributes["Default"];
 	var is_nullable_ = attributes["Null"];
+	var key_ = attributes["Key"];
 
 	//console.log(JSON.stringify(attributes));
 
@@ -85,16 +86,17 @@ function transpile(attributes, name_attribute) {
 	//console.log("COLUMN:", column_name_);
 	//console.log("DEFAULT:", default_value_);
 
-	return toSailsAttribute(type_, name_attribute, default_value_, is_nullable_);
+	return toSailsAttribute(type_, name_attribute, default_value_, is_nullable_, key_);
 }
 
-function toSailsAttribute(Type, attrib, default_value_, is_nullable_) {
+function toSailsAttribute(Type, attrib, default_value_, is_nullable_, key_) {
 	var content_view = {
 		required: true,
 		default_value: default_value_,
 		name: attrib,
 		type: undefined
 	};
+
 	//console.log(attrib);
 	var attribute = [];
 	if (Type.toLowerCase().indexOf('varchar') > -1 ||
@@ -130,8 +132,26 @@ function toSailsAttribute(Type, attrib, default_value_, is_nullable_) {
 		attribute.push(getDate());
 		content_view.type = "date";
 	}
+	if(key_ === "PRI") {
+		attribute.push("primaryKey: true");
+	} else if (key_ === "MUL") {
 
-	//console.log(attribute);
+	} else if (key_ === "UNI") {
+		attribute.push("unique: true");
+	}
+	if(is_nullable_ === "NO") {
+		attribute.push("required: true");
+	}
+	if(default_value_ !== "" && !default_value_ && default_value_ !== null) {
+		var def = "defaultsTo: ";
+		if(content_view.type == "text") {
+			def += '"' + default_value_ + '"';
+		} else {
+			def += default_value_;
+		}
+		attribute.push(def);
+	}
+
 	var result = {
 		model_content: (attrib.toLowerCase() + ": {" + attribute.join(',') + "}"),
 		view_content: JSON.stringify(content_view)

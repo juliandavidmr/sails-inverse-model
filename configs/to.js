@@ -20,6 +20,7 @@ exports.toModel = function(model_basic) {
 	out.push("\tDate:" + (new Date()));
 	out.push("*/\n");
 	out.push("module.exports = {");
+	//console.log(model_basic);
 	out.push(model_basic);
 	out.push("};");
 	return out.join("\n");
