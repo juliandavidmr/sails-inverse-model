@@ -18,12 +18,13 @@ exports.generatepg = function (config, folder_models, folder_controllers, folder
 
 /**
  * [generatemy generate mvc from MySQL]
- * @param  {[var json]} config             [config database MySQL; user, password, host, database, port]
- * @param  {[string]} folder_models      [dir folder models]
- * @param  {[string]} folder_controllers [dir folder controllers]
- * @param  {[string]} plurallang         [languaje es|en|fr]
- * @return {[void]}                    [none]
+ * @param  {[var json]} config             	[config database MySQL; user, password, host, database, port]
+ * @param  {[string]} folder_models      		[dir folder models]
+ * @param  {[string]} folder_controllers 		[dir folder controllers]
+ * @param  {[string]} folder_views 					[dir folder views]
+ * @param  {[string]} plurallang         		[languaje es|en|fr]
+ * @return {[void]}                    			[none]
  */
-exports.generatemy = function (config, folder_models, folder_controllers, plurallang) {
-  compiler_pg.generate(config, folder_models, folder_controllers, folder_views, plurallang);
+exports.generatemy = function (config, folder_models, folder_controllers, folder_views, plurallang) {
+  compiler_my.generate(config, folder_models, folder_controllers, folder_views, plurallang);
 };
