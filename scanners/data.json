@@ -1,28 +1,42 @@
 {
-  "ignore": [
-    "/*",
-    "--",
-    "create database",
-    "use",
-    "set",
-    "@",
-    "delimiter",
-    "create trigger",
-    "after",
-    "call",
-    "for",
-    "each",
-    "row",
-    "begin",
-    "call",
-    "new",
-    "end",
-    "create definer",
-    "declare",
-    "leave",
-    "if",
-    "open",
-    "fetch",
-    "close"
-  ]
+	"ignore": [
+		"/*",
+		"--",
+		"create database",
+		"use",
+		"set",
+		"@",
+		"delimiter",
+		"create trigger",
+		"after",
+		"call",
+		"for",
+		"each",
+		"row",
+		"begin",
+		"call",
+		"new",
+		"end",
+		"create definer",
+		"declare",
+		"leave",
+		"if",
+		"open",
+		"fetch",
+		"close"
+	],
+	"start": [
+    "create table if not exists",
+    "create table"
+	],
+	"contains": [
+		"enum(",
+    "primary key ("
+	],
+	"attr": [
+		"primary key (",
+		"key",
+		"unique key",
+    "constraint"
+	]
 }

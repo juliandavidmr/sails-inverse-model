@@ -2,80 +2,197 @@ var gencode = require('gencode');
 var data = require('./data.json');
 
 var clean = [];
+var tablas = [];
 
-gencode.utils.toArray('../test/inputsql.sql', 'utf8', '\n').then((value) => { //Too: \n, \t, -, etc.
+
+/*exports.escanear = function(ruta) {
+	var atributos = [];
+	for (var i = 0; i < 10; i++) {
+		atributos.push({
+				Type: "int(11)",
+				Null: "NO",
+				Key: "PRI",
+				Default: null,
+				Extra: "auto_increment"
+		})
+	}
+	tablas.push({
+		table_name: "table",
+		atr: atributos
+	})
+	console.log(JSON.stringify(tablas, null, 4));
+}
+
+exports.escanear('jjjj');*/
+
+
+gencode.utils.toArray('../test/script.sql', 'utf8', '\n').then((value) => { //Too: \n, \t, -, etc.
+	var allData = "";
+	var tables = [],
+		dataValid = [];
 	value.map((item) => {
 		item = item.toString().trim().toLowerCase();
-		if (sirve(item)) {
-			clean.push(item);
+
+		if (!isComment(item)) {
+			allData += item;
 		}
 	});
-
-  clean = reclean(clean);
-	clean = arrayToString(clean);
-	clean = clean.split(";");
-
-  for (var i = 0; i < clean.length; i++) {
-		if (clean[i].startsWith("create table")) {
-			console.log("-------------------------------------------------------------");
-			//console.log(clean[i]); //Content of table describe :D
-			console.log(getTable(clean[i]));
+	var splits = allData.split(";");
+	for (var i = 0; i < splits.length; i++) {
+		if (isValid(splits[i])) {
+			dataValid.push(splits[i]);
 		}
-  }
+	}
 
-	//console.log("Result:", JSON.stringify(value));
+	for (var i = 0; i < dataValid.length; i++) {
+		if (dataValid[i].toString().toLowerCase().trim().startsWith('create table')) {
+			tables.push(verifyContains(dataValid[i].toString()));
+		}
+	}
+	getTablesJSON(tables);
+
 }, (error) => {
 	console.log("ERROR=>", error);
 });
 
-function sirve(line) {
-  for (var i = 0; i < data.ignore.length; i++) {
-    if (line.startsWith(data.ignore[i])) {
-      //console.log("--->"+line + " empieza con " + i);
-      return false;
-    }
-  }
-  return true;
+function verifyContains(item) {
+	var result = "";
+	var state = true;
+	var start, end = 0;
+	for (var i = 0; i < data.contains.length; i++) {
+		result = "";
+		state = true;
+		while (state) {
+			start = item.indexOf(data.contains[i]);
+			if (start != -1) {
+				end = item.substring(start, item.length).indexOf(")") + start;
+				result += item.substring(0, start) + (item.substring(start, end).replace(",", "-"));
+				item = item.substring(end, item.length);
+			} else {
+				state = false;
+			}
+		}
+		result += item;
+		item = result;
+	}
+	return result;
 }
 
-
-/**
- * [getTable get prop table from sql]
- * @param  {[type]} describe [description]
- * @return {[type]}          [description]
- */
-function getTable(describe) {
-	var attr = "/*Algo para filtrar*/";
-	console.log(">>");
-	console.log(attr);
-	console.log("<<");
-	return describe;
+function cleanItem(item) {
+	var line = item;
+	for (var i = 0; i < data.start.length; i++) {
+		if (item.startsWith(data.start[i])) {
+			line = item.substring(data.start[i].length + 1, item.length);
+			break;
+		}
+	}
+	return line;
 }
 
-/**
- * [reclean quit spaces]
- * @param  {[type]} clean [array]
- * @return {[array]}       [array cleaned]
- */
-function reclean(clean) {
-  var out = [];
-  clean.map((item) => {
-    if (item.trim().length != 0) {
-      out.push(item);
-    }
-  });
-  return out;
+function getTableName(item) {
+	var firstLine = item.indexOf('(');
+	var name = item.substring(0, firstLine).trim().replace('`', '').replace('`', '');
+	return name;
 }
 
-/**
- * [arrayToString convert array to lines of string]
- * @param  {[type]} array [description]
- * @return {[type]}       [description]
- */
-function arrayToString(array) {
-	var outstring = "";
-	array.map((item) => {
-		outstring = outstring.concat(item)
-	});
-	return outstring;
+function splitAtributes(item) {
+	return "";
+}
+
+function isAtribute(line) {
+	for (var j = 0; j < data.attr.length; j++) {
+		if (line.toString().trim().startsWith(data.attr[j])) {
+			return false;
+		}
+	}
+	return true;
+}
+
+function getAtributes(item) {
+	var attrLines = item.indexOf('(');
+	item = item.substring(attrLines + 1, item.length);
+	var atributes = [];
+	var lines = item.split(',');
+	var split;
+
+	for (var i = 0; i < lines.length; i++) {
+		lines[i] = lines[i].replace("not null", "not_null");
+		if (isAtribute(lines[i])) {
+
+			split = lines[i] != "" ? lines[i].split(" ") : "";
+			atributes.push({
+				Name: getValue(0, split),
+				Type: getValue(1, split),
+				Size: getValue(2, split),
+				NotNull: split.length > 2,
+				AI: split.length > 3,
+			})
+		}
+	}
+	return atributes;
+}
+
+function getValue(pos, values) {
+	var result = "";
+
+	switch (pos) {
+		case 0:
+			result = values[pos].replace('`', '').replace('`', '');
+			break;
+		case 1:
+			var val = values[pos];
+			if (!val.startsWith("enum")) {
+				var start = val.indexOf("(");
+				result = start == -1 ? val : val.substring(0, start);
+			} else {
+				result = val;
+			}
+			break;
+		case 2:
+			var val = values[1];
+			if (!val.startsWith("enum")) {
+				var start = val.indexOf("(");
+				result = start == -1 ? "" : val.substring(start + 1, val.indexOf(")"));
+			} else {
+				result = "";
+			}
+			break;
+		default:
+	}
+	return result;
+}
+
+function getTablesJSON(tables) {
+	var tablesJSON = [];
+	var item, line;
+	for (var i = 0; i < tables.length; i++) {
+		item = tables[i].toString().toLowerCase();
+		tables[i] = cleanItem(item);
+		console.log("First: " + tables[i]);
+		console.log('-----------------------------');
+		console.log('');
+		tablesJSON.push({
+			table_name: getTableName(tables[i]),
+			atr: getAtributes(tables[i])
+		})
+	}
+	/*var atributos = [];*/
+	console.log(JSON.stringify(tablesJSON, null, 4));
+}
+
+function isComment(line) {
+	return line.trim().startsWith('--');
+}
+
+function isValid(line) {
+	if (line != "") {
+		for (var i = 0; i < data.ignore.length; i++) {
+			if (line.startsWith(data.ignore[i])) {
+				return false;
+			}
+		}
+	} else {
+		return false;
+	}
+	return true;
 }
