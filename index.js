@@ -24,6 +24,6 @@ exports.generatepg = function (config, folder_models, folder_controllers, folder
  * @param  {[string]} plurallang         [languaje es|en|fr]
  * @return {[void]}                    [none]
  */
-exports.generatemy = function (config, folder_models, folder_controllers, plurallang) {
-  compiler_pg.generate(config, folder_models, folder_controllers, folder_views, plurallang);
+exports.generatemy = function (config, folder_models, folder_controllers, folder_views, plurallang) {
+  compiler_my.generate(config, folder_models, folder_controllers, folder_views, plurallang);
 };
