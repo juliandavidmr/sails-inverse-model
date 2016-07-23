@@ -69,6 +69,7 @@ var cli = meow([
 	'  -l, --lang         Pluralize models and controllers: es|en|fr  Default: no pluralize',
 	'  -t, --type         Type gestor database: mysql|postgres        Default: mysql',
 	'  -s, --schema       Schema of database postgres: Default: public (Only PostgreSQL)',
+	'  -f, --file         .sql file location entry (Only MySQL)' + color(" NEW", "blue"),
 	//'	 -i, --intelligen  Detects your attributes of type passwords and mail: y|n Default: n'
 	//'  --neez  Type of word: yes|no|all  Default: all',
 ]);
@@ -86,7 +87,8 @@ var user,
 	plurallang,
 	schema,
 	type,
-	intelligen;
+	intelligen,
+	filesql;
 
 //User mysql
 if (cli.flags.u || cli.flags.user) {
@@ -140,6 +142,9 @@ if (folder_views == true || folder_views == "true") {
 	folder_views = concat(process.cwd(), "views"); // Method concat: see configs/route.js
 }
 
+//file .sql
+filesql = cli.flags.f || cli.flags.file;
+
 //Intelligen
 intelligen = cli.flags.i || cli.flags.intelligen;
 
@@ -149,12 +154,13 @@ if (db && pass && user && host) {
 	console.log("Password     :", color(pass, "green"));
 	console.log("Database     :", color(db, "green"));
 	console.log("Host         :", color(host, "green"));
-	console.log("Pluralize    :", color((plurallang || "No pluralize"), "green"));
-	console.log("Models       :", color((folder_models || "No generated"), "green"));
-	console.log("Views        :", color((folder_views || "No generated."), "green"));
-	console.log("Controllers  :", color((folder_controllers || "No generated"), "green"));
+	console.log("Pluralize    :", color((plurallang || "Not generate"), "green"));
+	console.log("Models       :", color((folder_models || "Not generate"), "green"));
+	console.log("Views        :", color((folder_views || "Not generate."), "green"));
+	console.log("Controllers  :", color((folder_controllers || "Not generate"), "green"));
 	console.log("DB           :", color((type), "green"));
 	console.log("Schema (pg)  :", color((schema), "green"));
+	console.log("File (script):", color((filesql || "Not used"), "green"), "green");
 
 	// Mysql & postgres connect config.
 	var config = {

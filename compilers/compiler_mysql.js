@@ -27,54 +27,56 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 		if (err) {
 			console.log("ERROR: ", err);
 		} else {
-			var Models = [], count = 1;
+			var Models = [],
+				count = 1;
 
-			async.forEachOf(data,	function(value, table, callback) {
-					if (data.hasOwnProperty(table)) {
-						console.log(color("[" + (count++) + " Generating]", "blue") + " " + table + " table ...");
-						var attributes_sails = [], view_contents = [];
-						mysqldesc.keyColumnUsage(config, config.database, table, function (err, data2) {
-							for (var colum in data[table]) {
-								//console.log(table + "=>" + colum);
-								var reference_fk = undefined;
-								if(data2[colum] && data2[colum]["REFERENCED_TABLE_NAME"]) {
-									reference_fk = {
+			async.forEachOf(data, function(value, table, callback) {
+				if (data.hasOwnProperty(table)) {
+					console.log(color("[" + (count++) + " Generating]", "blue") + " " + table + " table ...");
+					var attributes_sails = [],
+						view_contents = [];
+					mysqldesc.keyColumnUsage(config, config.database, table, function(err, data2) {
+						for (var colum in data[table]) {
+							//console.log(table + "=>" + colum);
+							var reference_fk = undefined;
+							if (data2[colum] && data2[colum]["REFERENCED_TABLE_NAME"]) {
+								reference_fk = {
 										table: data2[colum].REFERENCED_TABLE_NAME,
 										column: data2[colum].REFERENCED_COLUMN_NAME
 									}
 									//console.log(table + "=>" + JSON.stringify(data2[colum], null, 4));
-								}
-								var attributes = data[table][colum];
-								//console.log(attributes);
-								var result = transpile(attributes, colum, reference_fk);
-								view_contents.push(result.view_content);
-								attributes_sails.push(result.model_content);
 							}
-							//console.log("-------------");
-							Models.push({
-								model_name: plural.pluraliza(s.camelize(table), plurallang).trim(),
-								content: "attributes: { " + (attributes_sails) + " }",
-								view_content: view_contents
-							});
-							//console.log(table + " = " + JSON.stringify(table, null, 4));
-							callback(null, table);
+							var attributes = data[table][colum];
+							//console.log(attributes);
+							var result = transpile(attributes, colum, reference_fk);
+							view_contents.push(result.view_content);
+							attributes_sails.push(result.model_content);
+						}
+						//console.log("-------------");
+						Models.push({
+							model_name: plural.pluraliza(s.camelize(table), plurallang).trim(),
+							content: "attributes: { " + (attributes_sails) + " }",
+							view_content: view_contents
 						});
-					}
-				}, function(err) {
-					console.log([Models.length, "tables"].join(" "));
+						//console.log(table + " = " + JSON.stringify(table, null, 4));
+						callback(null, table);
+					});
+				}
+			}, function(err) {
+				console.log([Models.length, "tables"].join(" "));
 
-					//console.log(Models);
+				//console.log(Models);
 
-					if (folder_views != "" && folder_views) {
-						view.generate(Models, folder_views);
-					}
-					if (folder_models != "" && folder_models) {
-						saveModels(folder_models, Models, plurallang);
-					}
-					if (folder_controllers != "" && folder_controllers) {
-						saveControllers(folder_controllers, Models, plurallang);
-					}
-				});
+				if (folder_views != "" && folder_views) {
+					view.generate(Models, folder_views);
+				}
+				if (folder_models != "" && folder_models) {
+					saveModels(folder_models, Models, plurallang);
+				}
+				if (folder_controllers != "" && folder_controllers) {
+					saveControllers(folder_controllers, Models, plurallang);
+				}
+			});
 		}
 	});
 };
@@ -148,12 +150,12 @@ function toSailsAttribute(Type, attrib, default_value_, is_nullable_, key_, refe
 		attribute.push(getDate());
 		content_view.type = "date";
 	}
-	if(key_ === "PRI") {
+	if (key_ === "PRI") {
 		attribute.push(getPK());
 		content_view.required = true;
 	} else if (key_ === "MUL") {
 		// TODO: Nothing now
-		if(reference_fk) {
+		if (reference_fk) {
 			attrib = attrib.replace(FK_IDENTIFIER, "");
 			//attrib = reference_fk.table;
 			//attribute.push('model: ' + reference_fk.table);
@@ -162,13 +164,13 @@ function toSailsAttribute(Type, attrib, default_value_, is_nullable_, key_, refe
 	} else if (key_ === "UNI") {
 		attribute.push(getUnique());
 	}
-	if(is_nullable_ === "NO") {
+	if (is_nullable_ === "NO") {
 		attribute.push(getRequired());
 		content_view.required = true;
 	}
-	if(default_value_ !== "" && !default_value_ && default_value_ !== null) {
+	if (default_value_ !== "" && !default_value_ && default_value_ !== null) {
 		var def = "defaultsTo: ";
-		if(content_view.type == "text") {
+		if (content_view.type == "text") {
 			def += '"' + default_value_ + '"';
 		} else {
 			def += default_value_;

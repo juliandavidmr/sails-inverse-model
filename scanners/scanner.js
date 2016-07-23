@@ -1,39 +1,10 @@
-/**
- * scanner.js
- * @autor Julian David (@anlijudavid)
- * @version 1.0.0
- * 2016
- */
-
 var gencode = require('gencode');
 var data = require('./data.json');
 
-var clean = [];
-var tablas = [];
 
 
-/*exports.escanear = function(ruta) {
-	var atributos = [];
-	for (var i = 0; i < 10; i++) {
-		atributos.push({
-				Type: "int(11)",
-				Null: "NO",
-				Key: "PRI",
-				Default: null,
-				Extra: "auto_increment"
-		})
-	}
-	tablas.push({
-		table_name: "table",
-		atr: atributos
-	})
-	console.log(JSON.stringify(tablas, null, 4));
-}
 
-exports.escanear('jjjj');*/
-
-
-gencode.utils.toArray('../test/new.sql', 'utf8', '\n').then((value) => { //Too: \n, \t, -, etc.
+gencode.utils.toArray('../test/script.sql', 'utf8', '\n').then((value) => { //Too: \n, \t, -, etc.
 	var allData = "";
 	var tables = [],
 		dataValid = [];
