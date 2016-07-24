@@ -120,6 +120,18 @@ Complete Models.
 Complete Controllers.
 ```
 
+## MySQL from file (file.sql)
+
+```js
+$ node sails-inverse-model -f /your/path/to/script.sql -m -v -c
+=========================================
+Complete views.
+=========================================
+Complete Controllers.
+=========================================
+Complete Models.
+```
+
 # PostgreSQL
 
 Go to folder of project SailsJS and:

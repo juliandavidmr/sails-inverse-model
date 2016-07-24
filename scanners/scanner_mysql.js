@@ -1,37 +1,42 @@
 var gencode = require('gencode');
 var data = require('./data.json');
 
+exports.generate = function(pathsql, cb) {
+	gencode.utils.toArray(pathsql, 'utf8', '\n').then((value) => { //Too: \n, \t, -, etc.
+		var allData = "";
+		var tables = [],
+			dataValid = [];
+		value.map((item) => {
+			item = item.toString().trim().toLowerCase();
 
-
-
-gencode.utils.toArray('../test/script.sql', 'utf8', '\n').then((value) => { //Too: \n, \t, -, etc.
-	var allData = "";
-	var tables = [],
-		dataValid = [];
-	value.map((item) => {
-		item = item.toString().trim().toLowerCase();
-
-		if (!isComment(item)) {
-			allData += item;
+			if (!isComment(item)) {
+				allData += item;
+			}
+		});
+		var splits = allData.split(";");
+		for (var i = 0; i < splits.length; i++) {
+			if (isValid(splits[i])) {
+				dataValid.push(splits[i]);
+			}
 		}
+
+		for (var i = 0; i < dataValid.length; i++) {
+			if (dataValid[i].toString().toLowerCase().trim().startsWith('create table')) {
+				tables.push(verifyContains(dataValid[i].toString()));
+			}
+		}
+		getTablesJSON(tables, function(err, result) {
+			//console.log(":>", JSON.stringify(result, null, 2));
+			cb(err, result);
+		});
+
+	}, (error) => {
+		cb(error, null);
+		//console.log("ERROR=>", error);
 	});
-	var splits = allData.split(";");
-	for (var i = 0; i < splits.length; i++) {
-		if (isValid(splits[i])) {
-			dataValid.push(splits[i]);
-		}
-	}
+};
 
-	for (var i = 0; i < dataValid.length; i++) {
-		if (dataValid[i].toString().toLowerCase().trim().startsWith('create table')) {
-			tables.push(verifyContains(dataValid[i].toString()));
-		}
-	}
-	getTablesJSON(tables);
-
-}, (error) => {
-	console.log("ERROR=>", error);
-});
+//exports.generate("../test/script.sql");
 
 function verifyContains(item) {
 	var result = "";
@@ -105,7 +110,7 @@ function getAtributes(item) {
 				Size: getValue(2, split),
 				NotNull: split.length > 2,
 				AI: split.length > 3,
-			})
+			});
 		}
 	}
 	return atributes;
@@ -141,7 +146,7 @@ function getValue(pos, values) {
 	return result;
 }
 
-function getTablesJSON(tables) {
+function getTablesJSON(tables, cb) {
 	var tablesJSON = [];
 	var item, line;
 	for (var i = 0; i < tables.length; i++) {
@@ -153,10 +158,9 @@ function getTablesJSON(tables) {
 			atr: getAtributes(tables[i])
 		})
 	}
-	/*var atributos = [];*/
-	console.log("Yilver");
 	console.log("d: " + tablesJSON.length);
-	console.log(JSON.stringify(tablesJSON, null, 4));
+	//console.log(JSON.stringify(tablesJSON, null, 4));
+	cb(null, tablesJSON);
 }
 
 function isComment(line) {

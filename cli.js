@@ -8,13 +8,15 @@ var ansi = require('ansi-styles');
 require('./configs/color');
 require('./configs/route');
 
-var compiler_my = require('./compilers/compiler_mysql');
+var compiler_my = require('./compilers/mysql/compiler_mysql');
 var compiler_pg = require('./compilers/compiler_pg');
+var transpilefile = require('./compilers/mysql/compiler_sqlfile_mysql');
+var exitsfile = require('is-existing-file');
 
 var cli = meow([
 	color("                .-..-.																		      ", "blue"),
 	"																																							",
-	color("Sails", "yellow") + color("-inverse", "blue") + color("-model", "red") + color("    <|    .-..-.	v. 1.1.3                 ", "green"),
+	color("Sails", "yellow") + color("-inverse", "blue") + color("-model", "red") + color("    <|    .-..-.	v. 1.1.4                 ", "green"),
 	color("                        |\																	   ", "green"),
 	color("        ~    ~   ~     /|.\ 																   ", "green"),
 	color("           ~  ~       / || \																   ", "green"),
@@ -62,14 +64,14 @@ var cli = meow([
 	'  -u, --user         User of database',
 	'  -p, --pass         Password of database',
 	'  -d, --database     Database name',
-	'  -h, --host         Host server 	            Default: localhost',
-	'  -m, --models       Folder output models	    Default: Folder actual',
-	'  -c, --controllers  Folder output	controllers Default: Folder actual',
-	'  -v, --views        Folder output	views       Default: Folder actual ' + color('(Experimental)', 'yellow'),
-	'  -l, --lang         Pluralize models and controllers: es|en|fr  Default: no pluralize',
-	'  -t, --type         Type gestor database: mysql|postgres        Default: mysql',
+	'  -h, --host         Host server                Default: localhost',
+	'  -m, --models       Folder output models       Default: Folder actual',
+	'  -c, --controllers  Folder output controllers  Default: Folder actual',
+	'  -v, --views        Folder output views        Default: Folder actual ' + color('(Experimental)', 'yellow'),
+	'  -l, --lang         Pluralize models and controllers: es|en|fr     Default: no pluralize',
+	'  -t, --type         Type gestor database: mysql|postgres|mongodb   Default: mysql',
 	'  -s, --schema       Schema of database postgres: Default: public (Only PostgreSQL)',
-	'  -f, --file         .sql file location entry (Only MySQL)' + color(" NEW", "blue"),
+	'  -f, --file         .sql file location entry (Only MySQL)' + color(" NEW", "blue") + color(' (Experimental)', 'yellow'),
 	//'	 -i, --intelligen  Detects your attributes of type passwords and mail: y|n Default: n'
 	//'  --neez  Type of word: yes|no|all  Default: all',
 ]);
@@ -144,12 +146,27 @@ if (folder_views == true || folder_views == "true") {
 
 //file .sql
 filesql = cli.flags.f || cli.flags.file;
+if (filesql == true || filesql == "true") {
+	filesql = undefined; // Method concat: see configs/route.js
+}
 
 //Intelligen
 intelligen = cli.flags.i || cli.flags.intelligen;
 
-if (db && pass && user && host) {
-
+if (filesql) {
+	console.log("Pluralize    :", color((plurallang || "Not generate"), "green"));
+	console.log("Models       :", color((folder_models || "Not generate"), "green"));
+	console.log("Views        :", color((folder_views || "Not generate."), "green"));
+	console.log("Controllers  :", color((folder_controllers || "Not generate"), "green"));
+	console.log("File (script):", color((filesql || "Not used"), "green"));
+	exitsfile(filesql, function(exits) {
+		if (exits) {
+			transpilefile.generate(filesql, folder_models, folder_controllers, folder_views, plurallang);
+		} else {
+			console.log(color("\nERROR: No exits '" + filesql + "'. \nEnter 'sails-inverse-model --help'", "red"));
+		}
+	});
+} else if (db && pass && user && host) {
 	console.log("User         :", color(user, "green"));
 	console.log("Password     :", color(pass, "green"));
 	console.log("Database     :", color(db, "green"));
@@ -160,7 +177,6 @@ if (db && pass && user && host) {
 	console.log("Controllers  :", color((folder_controllers || "Not generate"), "green"));
 	console.log("DB           :", color((type), "green"));
 	console.log("Schema (pg)  :", color((schema), "green"));
-	console.log("File (script):", color((filesql || "Not used"), "green"), "green");
 
 	// Mysql & postgres connect config.
 	var config = {
@@ -174,10 +190,12 @@ if (db && pass && user && host) {
 
 	if (folder_controllers || folder_models || folder_views) {
 		type = type.toLowerCase(); //pg, postgres, mysql
-		if (type.indexOf("pg") != -1 || type.indexOf("postgres") != -1) {
+		if (type.indexOf("pg") != -1 || type.indexOf("postgres") != -1) { //pg, postgres
 			config.port = 5432;
 			compiler_pg.generate(config, folder_models, folder_controllers, folder_views, plurallang);
-		} else { //MySQL
+		} else if (type.indexOf("mg") != -1 || type.indexOf("mongo") != -1) { //my, mysql
+
+		} else { //my, mysql
 			delete config.schema;
 			compiler_my.generate(config, folder_models, folder_controllers, folder_views, plurallang);
 		}

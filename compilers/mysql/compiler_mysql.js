@@ -11,13 +11,13 @@
 var mysqldesc = require('mysqldesc');
 var s = require("underscore.string");
 
-var plural = require('../configs/plural');
-var to = require('../configs/to');
-var view = require('../genviews/view');
+var plural = require('../../configs/plural');
+var to = require('../../configs/to');
+var view = require('../../genviews/view');
 var async = require("async");
 
-require('./save');
-require('../configs/color');
+require('../save');
+require('../../configs/color');
 
 var FK_IDENTIFIER = "id";
 
@@ -66,7 +66,6 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 				console.log([Models.length, "tables"].join(" "));
 
 				//console.log(Models);
-
 				if (folder_views != "" && folder_views) {
 					view.generate(Models, folder_views);
 				}
@@ -85,7 +84,7 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
  * [transpile: convert all attributes mysql to sailsjs]
  * @param  {[type]} attributes     	[description]
  * @param  {[type]} name_attribute 	[description]
- * @param  {[type]} reference_fk 	[description]
+ * @param  {[type]} reference_fk 	  [description]
  * @return {[type]}                	[description]
  */
 function transpile(attributes, name_attribute, reference_fk) {
@@ -101,10 +100,10 @@ function transpile(attributes, name_attribute, reference_fk) {
 	//console.log("COLUMN:", column_name_);
 	//console.log("DEFAULT:", default_value_);
 
-	return toSailsAttribute(type_, name_attribute, default_value_, is_nullable_, key_, reference_fk);
+	return exports.toSailsAttribute(type_, name_attribute, default_value_, is_nullable_, key_, reference_fk);
 }
 
-function toSailsAttribute(Type, attrib, default_value_, is_nullable_, key_, reference_fk) {
+exports.toSailsAttribute = function (Type, attrib, default_value_, is_nullable_, key_, reference_fk) {
 	var content_view = {
 		required: false,
 		default_value: default_value_,
