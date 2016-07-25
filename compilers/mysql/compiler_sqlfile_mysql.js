@@ -47,13 +47,6 @@ exports.createModels = function(pathsql, cb) {
 	});
 };
 
-/**
- * [transpile: convert all attributes mysql to sailsjs]
- * @param  {[type]} attributes     	[description]
- * @param  {[type]} name_attribute 	[description]
- * @param  {[type]} reference_fk 	  [description]
- * @return {[type]}                	[description]
- */
 function transpile(attributes) {
 	//console.log("attributes " + JSON.stringify(attributes, null, 4));
 	var type_ = attributes["Type"];
@@ -66,14 +59,6 @@ function transpile(attributes) {
 	return compiler_mysql.toSailsAttribute(type_, name_, null, is_nullable_);
 }
 
-
-exports.generate("../../test/script.sql", null, null, null, function(err, result) {
-	if (err) {
-		console.log(err);
-	} else {
-		console.log(JSON.stringify(result, null, 2));
-	}
-});
 /*
 {
    "table_name": "tipo_notificacion",

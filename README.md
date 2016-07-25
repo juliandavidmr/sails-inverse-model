@@ -6,7 +6,7 @@
 
 ## Sails-inverse-model is an module that helps you generate models, controllers and views SailsJS from a any database.
 
-> Available for PostgreSQL and MySQL :)
+> Available for **PostgreSQL** and **MySQL**, and soon will be available for **MongoDB** :)
 
 This NPM also provides all the functions necessary to convert between different data types.
 
@@ -15,8 +15,7 @@ This NPM also provides all the functions necessary to convert between different 
 - [Import](#Import)
 
 --------------------------------------------------------------------------------
-
-## Installation
+## Installation ##
 
 Linux or MacOS
 
@@ -30,71 +29,73 @@ Microsoft Windows
 $ npm install sails-inverse-model -g
 ```
 
-## Usage
+## Usage ##
 
 In the bash o cmd:
 
 ```bash
 $ sails-inverse-model --help
-Generate models, controllers and views (MVC) for Sails.js from the database any.
 
-                .-..-.                                                                      
+  Generate models, controllers and views (MVC) for Sails.js from the database any.
 
-Sails-inverse-model    <|    .-..-.    v. 1.1.4                 
-                        |                                                                   
-        ~    ~   ~     /|.                                                                    
-           ~  ~       / ||                                                                    
-             ~  ~   ,'  |'                                                                 
-                 .-'.-==|/_--'                                                               
-                 `--'-------'                                                                
-    __--___--___---___---___--___---___--___                             
-  ____---___--___---___--___---___--___-__---___                       
+                  .-..-.																		      
 
- -----------------------------------------------------------------                        
- :: Sun Jul 17 2016 10:25:35 GMT-0500 (COT)                                                        
- -----------------------------------------------------------------                        
-Example:
-  $ mkdir sails-output
-  $ cd sails-output
-  $ sails-inverse-model -u postgres -p root -d almacen -t pg -m -v -c
+  Sails-inverse-model    <|    .-..-.	v. 1.1.4                 
+                          |																	   
+          ~    ~   ~     /|. 																   
+             ~  ~       / || 																   
+               ~  ~   ,'  |'  															   
+                   .-'.-==|/_--'															   
+                   `--'-------' 															   
+      __--___--___---___---___--___---___--___      					   
+    ____---___--___---___--___---___--___-__---___      				 
 
-User         : postgres
-Password     : root
-Database     : almacen
-Host         : localhost
-Pluralize    : No pluralize
-Models       : /home/julian/Documents/sails-output/models
-Views        : /home/julian/Documents/sails-output/views
-Controllers  : /home/julian/Documents/sails-output/controllers
-DB           : pg
-Schema (pg)  : public
-=====================================
-Complete views.
-=====================================
-Complete Models.
-=====================================
-Complete Controllers.
+   -----------------------------------------------------------------						
+   :: Mon Jul 25 2016 17:17:25 GMT-0500 (COT)																	
+   -----------------------------------------------------------------						
+  Example:
+    $ mkdir sails-output
+    $ cd sails-output
+    $ sails-inverse-model -u postgres -p root -d almacen -t pg -m -v -c
 
-    Note: Copy models      => your/project_sails/api
-          Copy controllers => your/project_sails/api
-          Copy views/*     => your/project_sails/views/
- Then:
- $ cd your/project_sails/
- $ sails lift
+  User         : postgres
+  Password     : root
+  Database     : almacen
+  Host         : localhost
+  Pluralize    : No pluralize
+  Models       : /home/julian/Documents/sails-output/models
+  Views        : /home/julian/Documents/sails-output/views
+  Controllers  : /home/julian/Documents/sails-output/controllers
+  DB           : pg
+  Schema (pg)  : public
+  =====================================
+  Complete views.
+  =====================================
+  Complete Models.
+  =====================================
+  Complete Controllers.
 
- More info: https://github.com/juliandavidmr/sails-inverse-model
- -----------------------------------------------------------------                        
-Options
-  -u, --user         User of database
-  -p, --pass         Password of database
-  -d, --database     Database name
-  -h, --host         Host server                 Default: localhost
-  -m, --models       Folder output models        Default: Folder actual
-  -c, --controllers  Folder output    controllers Default: Folder actual
-  -v, --views        Folder output    views       Default: Folder actual (Experimental)
-  -l, --lang         Pluralize models and controllers: es|en|fr  Default: no pluralize
-  -t, --type         Type gestor database: mysql|postgres        Default: mysql
-  -s, --schema       Schema of database postgres: Default: public (Only PostgreSQL)
+      Note: Copy models      => your/project_sails/api
+            Copy controllers => your/project_sails/api
+            Copy views/*     => your/project_sails/views/
+   Then:
+   $ cd your/project_sails/
+   $ sails lift
+
+   More info: https://github.com/juliandavidmr/sails-inverse-model
+   -----------------------------------------------------------------						
+  Options
+    -u, --user         User of database
+    -p, --pass         Password of database
+    -d, --database     Database name
+    -h, --host         Host server                Default: localhost
+    -m, --models       Folder output models       Default: Folder actual
+    -c, --controllers  Folder output controllers  Default: Folder actual
+    -v, --views        Folder output views        Default: Folder actual (Experimental)
+    -l, --lang         Pluralize models and controllers: es|en|fr     Default: no pluralize
+    -t, --type         Type gestor database: mysql|postgres   Default: mysql
+    -s, --schema       Schema of database postgres: Default: public (Only PostgreSQL)
+    -f, --file         .sql file location entry (Only MySQL) NEW (Experimental
 ```
 
 # MySQL
