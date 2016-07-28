@@ -5,6 +5,7 @@ var ProgressBar = require('progress');
 
 require('./crud');
 require('../configs/route');
+require('../configs/color');
 
 exports.generate = function(Models, folder_views) {
 	mkdir(folder_views).then(() => {
@@ -52,7 +53,7 @@ exports.generate = function(Models, folder_views) {
 
 			bar3.tick();
 			if (bar3.complete) {
-				console.log('\nComplete views.\n');
+				console.log('Views ' + color("[OK]", "green"));
 			}
 		});
 	});

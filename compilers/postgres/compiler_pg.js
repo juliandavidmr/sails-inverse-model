@@ -11,10 +11,10 @@
 var ProgressBar = require('progress');
 var s = require("underscore.string");
 
-var plural = require('../configs/plural');
-var to = require('../configs/to');
-var view = require('../genviews/view');
-require('./save');
+var plural = require('../../configs/plural');
+var to = require('../../configs/to');
+var view = require('../../genviews/view');
+require('../save');
 
 var PostgresSchema = require('pg-json-schema-export');
 
@@ -33,16 +33,15 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 					//console.log(attrs);
 					var attributes_sails = [], view_contents = [];
 					for (var attr in attrs) { // attributes of a table
-						var name_attribute = attr;
-						var properties_attribute = attrs[attr];
-						//console.log("\n------>>", properties_attribute);
-						var result = transpile(properties_attribute, name_attribute);
-						attributes_sails.push(result.model_content);
-						view_contents.push(result.view_content);
+						if (attrs.hasOwnProperty(attr)) { // attr => name of attribute
+							//console.log("\n------>>", properties_attribute);
+							var result = transpile(attrs[attr]);
+							attributes_sails.push(result.model_content);
+							view_contents.push(result.view_content);
+						}
 					}
 
 					//console.log(view_content);
-
 					Models.push({
 						model_name: plural.pluraliza(s.camelize(table), plurallang).trim(),
 						content: "attributes: { " + (attributes_sails.join(", ")) + " }",
@@ -56,7 +55,6 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 			}*/
 
 			console.log([Models.length, "tables"].join(" "));
-
 			//console.log(JSON.stringify(Models, null, 4));
 
 			if (folder_models != "" && folder_models) {
@@ -78,21 +76,15 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 /**
  * [transpile: convert all attributes postgres to sailsjs]
  * @param  {[type]} attributes     [description]
- * @param  {[type]} name_attribute [description]
  * @return {[type]}                [description]
  */
-function transpile(attributes, name_attribute) {
+function transpile(attributes) {
 	var type_ = attributes["data_type"];
 	var column_name_ = attributes["column_name"];
 	var default_value_ = attributes["column_default"];
 	var is_nullable_ = attributes["is_nullable"];
 
 	//console.log(JSON.stringify(attributes));
-
-	//console.log("TYPE:", type_);
-	//console.log("COLUMN:", column_name_);
-	//console.log("DEFAULT:", default_value_);
-
 	return toSailsAttribute(type_, column_name_, default_value_, is_nullable_);
 }
 
@@ -105,8 +97,6 @@ function transpile(attributes, name_attribute) {
  * @return {string}                 [result; attribute sailsjs]
  */
 function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
-
-	var sails_attribute = [];
 	var sails_attribute_children = [];
 	var content_view = {
 		required: (is_nullable_ == "true" || is_nullable_ == true),
@@ -170,7 +160,7 @@ function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
 		sails_attribute_children.push("required: " + false);
 	}
 
-	//console.log("=>=>=>=>>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>>=>=>=>=>");
+	//console.log("=>=>=>=>>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>>=>=>=>");
 	//console.log(JSON.stringify(content_view));
 
 	var result = {
@@ -179,7 +169,6 @@ function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
 	}
 
 	//console.log("==>",result.model_content);
-	//sails_attribute.push(attrib.toLowerCase() + ": {" + sails_attribute_children.join(',') + "}");
 	return result;
 };
 

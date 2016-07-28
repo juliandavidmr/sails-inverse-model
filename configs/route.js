@@ -4,4 +4,4 @@ concat = function(text1, text2) {
   } else {
     return text1 + "/" + text2;
   }
-}
+};

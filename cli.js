@@ -4,13 +4,16 @@
 
 var meow = require('meow');
 var ansi = require('ansi-styles');
+var assert = require('assert');
 
 require('./configs/color');
 require('./configs/route');
 
+var compiler_my_transpile = require('./compilers/mysql/compiler_sqlfile_mysql');
 var compiler_my = require('./compilers/mysql/compiler_mysql');
-var compiler_pg = require('./compilers/compiler_pg');
-var transpilefile = require('./compilers/mysql/compiler_sqlfile_mysql');
+var compiler_pg = require('./compilers/postgres/compiler_pg');
+var compiler_mg = require('./compilers/mongodb/compiler_mongo');
+
 var exitsfile = require('is-existing-file');
 
 var cli = meow([
@@ -76,8 +79,6 @@ var cli = meow([
 	//'  --neez  Type of word: yes|no|all  Default: all',
 ]);
 
-//console.log(cli);
-
 var user,
 	pass,
 	db,
@@ -92,21 +93,30 @@ var user,
 	intelligen,
 	filesql;
 
-//User mysql
-if (cli.flags.u || cli.flags.user) {
-	user = cli.flags.u || cli.flags.user;
+//User
+user = cli.flags.u || cli.flags.user;
+if (user == true || user == "true") {
+	user = undefined; // Method concat: see configs/route.js
 }
 
 //Password
-if (cli.flags.p || cli.flags.pass) {
-	pass = (cli.flags.p || cli.flags.pass).toString();
+var pass = (cli.flags.p || cli.flags.pass);
+if (pass == true) {
+	pass = undefined;
+} else if (pass) {
+	pass = pass.toString();
 }
 
 //Database
 db = cli.flags.d || cli.flags.database;
 
-//Host of Mysql
+//Host
 host = cli.flags.h || cli.flags.host || "localhost";
+if (host == true) {
+	host = undefined;
+} else if (host) {
+	host = host.toString();
+}
 
 //Pluralize
 plurallang = cli.flags.l || cli.flags.lang;
@@ -114,7 +124,7 @@ if (plurallang == true || plurallang == "true") {
 	plurallang = undefined;
 }
 
-//Type gestor database mysql | postgres
+//Type gestor database mysql | postgres | mongo
 type = cli.flags.t || cli.flags.type || "mysql";
 if (type == true || type == "true") {
 	type = "mysql";
@@ -126,7 +136,7 @@ if (schema == true || schema == "true") {
 	schema = "public";
 }
 
-//Folder output
+//Folder models
 folder_models = cli.flags.m || cli.flags.models;
 if (folder_models == true || folder_models == "true") {
 	folder_models = concat(process.cwd(), "models"); // Method concat: see configs/route.js
@@ -153,55 +163,56 @@ if (filesql == true || filesql == "true") {
 //Intelligen
 intelligen = cli.flags.i || cli.flags.intelligen;
 
+// Mysql, postgres & mongo connect config.
+var config = {
+	user: user,
+	password: pass,
+	host: host,
+	database: db,
+	schema: schema,
+	port: 3306
+};
+
+msg();
 if (filesql) {
-	console.log("Pluralize    :", color((plurallang || "Not generate"), "green"));
-	console.log("Models       :", color((folder_models || "Not generate"), "green"));
-	console.log("Views        :", color((folder_views || "Not generate."), "green"));
-	console.log("Controllers  :", color((folder_controllers || "Not generate"), "green"));
-	console.log("File (script):", color((filesql || "Not used"), "green"));
 	exitsfile(filesql, function(exits) {
 		if (exits) {
-			transpilefile.generate(filesql, folder_models, folder_controllers, folder_views, plurallang);
+			compiler_my_transpile.generate(filesql, folder_models, folder_controllers, folder_views, plurallang);
 		} else {
 			console.log(color("\nERROR: No exits '" + filesql + "'. \nEnter 'sails-inverse-model --help'", "red"));
 		}
 	});
-} else if (db && pass && user && host) {
-	console.log("User         :", color(user, "green"));
-	console.log("Password     :", color(pass, "green"));
-	console.log("Database     :", color(db, "green"));
-	console.log("Host         :", color(host, "green"));
-	console.log("Pluralize    :", color((plurallang || "Not generate"), "green"));
-	console.log("Models       :", color((folder_models || "Not generate"), "green"));
-	console.log("Views        :", color((folder_views || "Not generate."), "green"));
-	console.log("Controllers  :", color((folder_controllers || "Not generate"), "green"));
-	console.log("DB           :", color((type), "green"));
-	console.log("Schema (pg)  :", color((schema), "green"));
-
-	// Mysql & postgres connect config.
-	var config = {
-		user: user,
-		password: pass,
-		host: host,
-		database: db,
-		schema: schema,
-		port: 3306
-	};
-
-	if (folder_controllers || folder_models || folder_views) {
+} else {
+	if (db && host) {
 		type = type.toLowerCase(); //pg, postgres, mysql
 		if (type.indexOf("pg") != -1 || type.indexOf("postgres") != -1) { //pg, postgres
 			config.port = 5432;
 			compiler_pg.generate(config, folder_models, folder_controllers, folder_views, plurallang);
-		} else if (type.indexOf("mg") != -1 || type.indexOf("mongo") != -1) { //my, mysql
-
-		} else { //my, mysql
+		} else if (type.indexOf("my") != -1 || type.indexOf("mysql") != -1) { //my, mysql
 			delete config.schema;
 			compiler_my.generate(config, folder_models, folder_controllers, folder_views, plurallang);
+		} else if (type.indexOf("mg") != -1 || type.indexOf("mongo") != -1) { //mg, mongo
+			compiler_mg.generate(config.host, 27017, config.database, plurallang, folder_views, folder_models, folder_controllers).then((value) => {
+				console.log(color("[OK]", "green") + " Mongo");
+			}, (err) => {
+				console.log("Error");
+				console.error(color(err, "red"));
+			});
 		}
 	} else {
-		console.log("\nPress:\t", ansi.yellow.open + "sails-inverse-model --help" + ansi.yellow.close);
+		console.warn(color("Missing parameters: enter 'sails-inverse-model --help'", "red"));
 	}
-} else {
-	console.log([ansi.yellow.open, "ERROR", "Missing parameters: enter 'sails-inverse-model --help'", ansi.yellow.close].join("\n"));
+}
+
+function msg() {
+	console.log("User        :", color(user || "Not used", "green"));
+	console.log("Password    :", color(pass || "Not used", "green"));
+	console.log("Database    :", color(db || "Not used", "green"));
+	console.log("Host        :", color(host || "Not used", "green"));
+	console.log("Pluralize   :", color((plurallang || "Not generate"), "green"));
+	console.log("Models      :", color((folder_models || "Not generate"), "green"));
+	console.log("Views       :", color((folder_views || "Not generate"), "green"));
+	console.log("Controllers :", color((folder_controllers || "Not generate"), "green"));
+	console.log("DB          :", color((type), "green"));
+	console.log("Schema (pg) :", color((schema), "green"));
 }

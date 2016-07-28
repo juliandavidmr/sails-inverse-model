@@ -1,6 +1,6 @@
 {
   "name": "sails-inverse-model",
-  "version": "1.1.4",
+  "version": "1.1.9",
   "description": "Generate models, controllers and views (MVC) for Sails.js from the database any.",
   "license": "MIT",
   "repository": "https://github.com/juliandavidmr/sails-inverse-model",
@@ -23,7 +23,8 @@
     "cli.js",
     "compilers/",
     "configs/",
-    "genviews/"
+    "genviews/",
+    "scanners/"
   ],
   "keywords": [
     "cli-app",

@@ -95,11 +95,6 @@ function transpile(attributes, name_attribute, reference_fk) {
 	var key_ = attributes["Key"];
 
 	//console.log(JSON.stringify(attributes));
-
-	//console.log("TYPE:", type_);
-	//console.log("COLUMN:", column_name_);
-	//console.log("DEFAULT:", default_value_);
-
 	return exports.toSailsAttribute(type_, name_attribute, default_value_, is_nullable_, key_, reference_fk);
 }
 
@@ -180,7 +175,7 @@ exports.toSailsAttribute = function (Type, attrib, default_value_, is_nullable_,
 	var result = {
 		model_content: (attrib.toLowerCase() + ": {" + attribute.join(',') + "}"),
 		view_content: JSON.stringify(content_view)
-	}
+	};
 	return result;
 };
 

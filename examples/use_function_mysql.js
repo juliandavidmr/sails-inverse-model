@@ -6,7 +6,7 @@ var config = {
   user: "root",
   pass: "root",
   port: 3306
-}
+};
 
 var folder_controllers = "/your/project/sails/api/"; //if folder_models == "" then: no generate controllers
 var folder_models = "/your/project/sails/api/"; //if folder_models == "" then: no generate models
