@@ -35,4 +35,4 @@ function read(name, callback) {
 		if (err) throw err;
 		callback(data.toString());
 	});
-};
+}

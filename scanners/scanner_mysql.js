@@ -156,7 +156,7 @@ function getTablesJSON(tables, cb) {
 		tablesJSON.push({
 			table_name: getTableName(tables[i]),
 			atr: getAtributes(tables[i])
-		})
+		});
 	}
 	console.log("d: " + tablesJSON.length);
 	//console.log(JSON.stringify(tablesJSON, null, 4));
@@ -168,7 +168,7 @@ function isComment(line) {
 }
 
 function isValid(line) {
-	if (line != "") {
+	if (line !== "") {
 		for (var i = 0; i < data.ignore.length; i++) {
 			if (line.startsWith(data.ignore[i])) {
 				return false;

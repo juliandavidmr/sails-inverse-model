@@ -8,13 +8,13 @@ require('../save');
 exports.generate = function(pathsql, folder_models, folder_controllers, folder_views, plurallang) {
 	this.createModels(pathsql, function(err, Models) {
 		//console.log(JSON.stringify(Models, null, 2));
-		if (folder_views != "" && folder_views) {
+		if (folder_views !== "" && folder_views) {
 			view.generate(Models, folder_views);
 		}
-		if (folder_models != "" && folder_models) {
+		if (folder_models !== "" && folder_models) {
 			saveModels(folder_models, Models, plurallang);
 		}
-		if (folder_controllers != "" && folder_controllers) {
+		if (folder_controllers !== "" && folder_controllers) {
 			saveControllers(folder_controllers, Models, plurallang);
 		}
 	});

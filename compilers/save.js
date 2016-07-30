@@ -37,7 +37,7 @@ saveControllers = function(dir_folder_controllers, Models, plurallang) {
 	}, function(ex) {
 		console.error(ex);
 	});
-}
+};
 
 /**
  * [saveModels save models in the folder Models]
@@ -66,4 +66,4 @@ saveModels = function(dir_folder_model, Models, plurallang) {
 	}, function(ex) {
 		console.error(color(ex, "red"));
 	});
-}
+};

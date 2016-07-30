@@ -5,9 +5,6 @@
  *
  * Process mysql to models waterline
  */
-
-'use strict';
-
 var mysqldesc = require('mysqldesc');
 var s = require("underscore.string");
 
@@ -41,10 +38,10 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 							var reference_fk = undefined;
 							if (data2[colum] && data2[colum]["REFERENCED_TABLE_NAME"]) {
 								reference_fk = {
-										table: data2[colum].REFERENCED_TABLE_NAME,
-										column: data2[colum].REFERENCED_COLUMN_NAME
-									}
-									//console.log(table + "=>" + JSON.stringify(data2[colum], null, 4));
+									table: data2[colum].REFERENCED_TABLE_NAME,
+									column: data2[colum].REFERENCED_COLUMN_NAME
+								};
+								//console.log(table + "=>" + JSON.stringify(data2[colum], null, 4));
 							}
 							var attributes = data[table][colum];
 							//console.log(attributes);
@@ -66,13 +63,13 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 				console.log([Models.length, "tables"].join(" "));
 
 				//console.log(Models);
-				if (folder_views != "" && folder_views) {
+				if (folder_views !== "" && folder_views) {
 					view.generate(Models, folder_views);
 				}
-				if (folder_models != "" && folder_models) {
+				if (folder_models !== "" && folder_models) {
 					saveModels(folder_models, Models, plurallang);
 				}
-				if (folder_controllers != "" && folder_controllers) {
+				if (folder_controllers !== "" && folder_controllers) {
 					saveControllers(folder_controllers, Models, plurallang);
 				}
 			});
@@ -98,7 +95,7 @@ function transpile(attributes, name_attribute, reference_fk) {
 	return exports.toSailsAttribute(type_, name_attribute, default_value_, is_nullable_, key_, reference_fk);
 }
 
-exports.toSailsAttribute = function (Type, attrib, default_value_, is_nullable_, key_, reference_fk) {
+exports.toSailsAttribute = function(Type, attrib, default_value_, is_nullable_, key_, reference_fk) {
 	var content_view = {
 		required: false,
 		default_value: default_value_,
@@ -240,7 +237,7 @@ function getEnum(Type) {
 	var line = Type.substring(pa1, pa2).replace(",", "").split('\'');
 	//console.log(pa1 + ", " + pa2);
 	line.map((item) => {
-		if (item != "") {
+		if (item !== "") {
 			out.push('"' + item + '"');
 		}
 	});

@@ -21,13 +21,13 @@ exports.generate = function(host, port, database, plurallang, folder_views, fold
 			console.log([Models.length, "tables"].join(" "));
 
 			//console.log(JSON.stringify(Models, null, 4));
-			if (folder_models != "" && folder_models) {
+			if (folder_models !== "" && folder_models) {
 				saveModels(folder_models, Models, plurallang);
 			}
-			if (folder_controllers != "" && folder_controllers) {
+			if (folder_controllers !== "" && folder_controllers) {
 				saveControllers(folder_controllers, Models, plurallang);
 			}
-			if (folder_views != "" && folder_views) {
+			if (folder_views !== "" && folder_views) {
 				view.generate(Models, folder_views);
 			}
 		}, (err) => {
@@ -99,7 +99,7 @@ function toSailsAttribute(type, name_attribute, isid) {
 
 	if (type == "object") {
 		content_view.required = true;
-		if (isid && isid == true) {
+		if (isid && isid === true) {
 			content_view.type = "number";
 			sails_attribute.push("type: 'integer'");
 		} else {

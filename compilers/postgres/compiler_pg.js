@@ -5,9 +5,6 @@
  *
  * Process mysql to models waterline
  */
-
-'use strict';
-
 var ProgressBar = require('progress');
 var s = require("underscore.string");
 
@@ -57,13 +54,13 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 			console.log([Models.length, "tables"].join(" "));
 			//console.log(JSON.stringify(Models, null, 4));
 
-			if (folder_models != "" && folder_models) {
+			if (folder_models !== "" && folder_models) {
 				saveModels(folder_models, Models, plurallang);
 			}
-			if (folder_controllers != "" && folder_controllers) {
+			if (folder_controllers !== "" && folder_controllers) {
 				saveControllers(folder_controllers, Models, plurallang);
 			}
-			if (folder_views != "" && folder_views) {
+			if (folder_views !== "" && folder_views) {
 				view.generate(Models, folder_views);
 			}
 		})
@@ -99,7 +96,7 @@ function transpile(attributes) {
 function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
 	var sails_attribute_children = [];
 	var content_view = {
-		required: (is_nullable_ == "true" || is_nullable_ == true),
+		required: (is_nullable_ == "true" || is_nullable_ === true),
 		default_value: undefined,
 		name: attrib,
 		type: undefined
@@ -147,14 +144,15 @@ function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
 		content_view.type = "number";
 	}
 
-	if (default_value_ != "" && default_value_ != undefined) {
+	if (default_value_ !== "" && default_value_ !== null) {
+		default_value_ = default_value_ + "";
 		if (!default_value_.startsWith("nextval")) { //No contains nextval
 			sails_attribute_children.push("default: " + default_value_);
 			content_view.default_value = default_value_;
 		}
 	}
 
-	if (is_nullable_ == "true" || is_nullable_ == true) {
+	if (is_nullable_ == "true" || is_nullable_ === true) {
 		sails_attribute_children.push("required: " + true);
 	} else {
 		sails_attribute_children.push("required: " + false);
@@ -166,12 +164,11 @@ function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
 	var result = {
 		model_content: (attrib.toLowerCase() + ": {" + sails_attribute_children.join(',') + "}"),
 		view_content: JSON.stringify(content_view)
-	}
+	};
 
 	//console.log("==>",result.model_content);
 	return result;
-};
-
+}
 
 function foreignkeys(constraints) {
 

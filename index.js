@@ -1,5 +1,3 @@
-'use strict';
-
 var compiler_my = require('./compilers/compiler_mysql');
 var compiler_pg = require('./compilers/compiler_pg');
 

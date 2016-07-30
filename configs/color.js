@@ -2,7 +2,7 @@ var ansi = require('ansi-styles');
 
 // Color text with ansi-styles
 color = function(text, color_) {
-  var color_ = color_.toLowerCase();
+  color_ = color_.toLowerCase();
   if(color_ == "white") {
     return ansi.white.open + (text) + ansi.white.close;
   } else if (color_ == "red") {

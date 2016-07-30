@@ -18,6 +18,6 @@ validate = function(path, mode, cb) {
 			}
 		}
 	}
-}
+};
 
 validate("/", "force");

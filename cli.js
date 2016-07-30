@@ -101,7 +101,7 @@ if (user == true || user == "true") {
 
 //Password
 var pass = (cli.flags.p || cli.flags.pass);
-if (pass == true) {
+if (pass === true) {
 	pass = undefined;
 } else if (pass) {
 	pass = pass.toString();
@@ -112,7 +112,7 @@ db = cli.flags.d || cli.flags.database;
 
 //Host
 host = cli.flags.h || cli.flags.host || "localhost";
-if (host == true) {
+if (host === true) {
 	host = undefined;
 } else if (host) {
 	host = host.toString();
@@ -120,43 +120,43 @@ if (host == true) {
 
 //Pluralize
 plurallang = cli.flags.l || cli.flags.lang;
-if (plurallang == true || plurallang == "true") {
+if (plurallang === true || plurallang == "true") {
 	plurallang = undefined;
 }
 
 //Type gestor database mysql | postgres | mongo
 type = cli.flags.t || cli.flags.type || "mysql";
-if (type == true || type == "true") {
+if (type === true || type == "true") {
 	type = "mysql";
 }
 
 //Schema database postgres
 schema = cli.flags.s || cli.flags.schema || "public";
-if (schema == true || schema == "true") {
+if (schema === true || schema == "true") {
 	schema = "public";
 }
 
 //Folder models
 folder_models = cli.flags.m || cli.flags.models;
-if (folder_models == true || folder_models == "true") {
+if (folder_models === true || folder_models == "true") {
 	folder_models = concat(process.cwd(), "models"); // Method concat: see configs/route.js
 }
 
 //Folder Controllers
 folder_controllers = cli.flags.c || cli.flags.controllers;
-if (folder_controllers == true || folder_controllers == "true") {
+if (folder_controllers === true || folder_controllers == "true") {
 	folder_controllers = concat(process.cwd(), "controllers"); // Method concat: see configs/route.js
 }
 
 //Folder views
 folder_views = cli.flags.v || cli.flags.views;
-if (folder_views == true || folder_views == "true") {
+if (folder_views === true || folder_views == "true") {
 	folder_views = concat(process.cwd(), "views"); // Method concat: see configs/route.js
 }
 
 //file .sql
 filesql = cli.flags.f || cli.flags.file;
-if (filesql == true || filesql == "true") {
+if (filesql === true || filesql == "true") {
 	filesql = undefined; // Method concat: see configs/route.js
 }
 

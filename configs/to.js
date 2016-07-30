@@ -24,7 +24,7 @@ exports.toModel = function(model_basic) {
 	out.push(model_basic);
 	out.push("};");
 	return out.join("\n");
-}
+};
 
 exports.saveController = function(name, plurallang) {
 	var name_cap = exports.capitalize(name);
@@ -92,5 +92,5 @@ exports.saveController = function(name, plurallang) {
 exports.capitalize = function(word) {
 	return word.replace(/(^|\s)([a-z])/g, function(m, p1, p2) {
 		return p1 + p2.toUpperCase();
-	})
+	});
 };
