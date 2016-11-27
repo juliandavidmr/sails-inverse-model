@@ -8,7 +8,6 @@
 var mysqldesc = require('mysqldesc');
 var s = require("underscore.string");
 
-var plural = require('../../configs/plural');
 var to = require('../../configs/to');
 var view = require('../../genviews/view');
 var async = require("async");
@@ -18,7 +17,7 @@ require('../../configs/color');
 
 var FK_IDENTIFIER = "id";
 
-exports.generate = function(config, folder_models, folder_controllers, folder_views, plurallang) {
+exports.generate = function(config, folder_models, folder_controllers, folder_views) {
 	// Describe connected database
 	mysqldesc(config, function(err, data) {
 		if (err) {
@@ -51,7 +50,7 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 						}
 						//console.log("-------------");
 						Models.push({
-							model_name: plural.pluraliza(s.camelize(table), plurallang).trim(),
+							model_name: s.camelize(table).trim(),
 							content: "attributes: { " + (attributes_sails) + " }",
 							view_content: view_contents
 						});
@@ -67,10 +66,10 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 					view.generate(Models, folder_views);
 				}
 				if (folder_models !== "" && folder_models) {
-					saveModels(folder_models, Models, plurallang);
+					saveModels(folder_models, Models);
 				}
 				if (folder_controllers !== "" && folder_controllers) {
-					saveControllers(folder_controllers, Models, plurallang);
+					saveControllers(folder_controllers, Models);
 				}
 			});
 		}

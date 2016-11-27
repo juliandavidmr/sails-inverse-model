@@ -61,7 +61,6 @@ User         : postgres
 Password     : root
 Database     : almacen
 Host         : localhost
-Pluralize    : No pluralize
 Models       : /home/julian/Documents/sails-output/models
 Views        : /home/julian/Documents/sails-output/views
 Controllers  : /home/julian/Documents/sails-output/controllers

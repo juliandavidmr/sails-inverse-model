@@ -5,17 +5,17 @@ var to = require('../../configs/to');
 var s = require("underscore.string");
 require('../save');
 
-exports.generate = function(pathsql, folder_models, folder_controllers, folder_views, plurallang) {
+exports.generate = function(pathsql, folder_models, folder_controllers, folder_views) {
 	this.createModels(pathsql, function(err, Models) {
 		//console.log(JSON.stringify(Models, null, 2));
 		if (folder_views !== "" && folder_views) {
 			view.generate(Models, folder_views);
 		}
 		if (folder_models !== "" && folder_models) {
-			saveModels(folder_models, Models, plurallang);
+			saveModels(folder_models, Models);
 		}
 		if (folder_controllers !== "" && folder_controllers) {
-			saveControllers(folder_controllers, Models, plurallang);
+			saveControllers(folder_controllers, Models);
 		}
 	});
 };

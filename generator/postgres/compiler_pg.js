@@ -8,14 +8,13 @@
 var ProgressBar = require('progress');
 var s = require("underscore.string");
 
-var plural = require('../../configs/plural');
 var to = require('../../configs/to');
 var view = require('../../genviews/view');
 require('../save');
 
 var PostgresSchema = require('pg-json-schema-export');
 
-exports.generate = function(config, folder_models, folder_controllers, folder_views, plurallang) {
+exports.generate = function(config, folder_models, folder_controllers, folder_views) {
 	PostgresSchema.toJSON(config, config.schema)
 		.then(function(schemas) {
 			//console.log(JSON.stringify(schemas, null, 4));
@@ -40,7 +39,7 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 
 					//console.log(view_content);
 					Models.push({
-						model_name: plural.pluraliza(s.camelize(table), plurallang).trim(),
+						model_name:s.camelize(table).trim(),
 						content: "attributes: { " + (attributes_sails.join(", ")) + " }",
 						view_content: view_contents
 					});
@@ -55,10 +54,10 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 			//console.log(JSON.stringify(Models, null, 4));
 
 			if (folder_models !== "" && folder_models) {
-				saveModels(folder_models, Models, plurallang);
+				saveModels(folder_models, Models);
 			}
 			if (folder_controllers !== "" && folder_controllers) {
-				saveControllers(folder_controllers, Models, plurallang);
+				saveControllers(folder_controllers, Models);
 			}
 			if (folder_views !== "" && folder_views) {
 				view.generate(Models, folder_views);
