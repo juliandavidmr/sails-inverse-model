@@ -1,7 +1,7 @@
 var Handlebars = require('handlebars');
 var components = require('./components');
 
-//Create "create" html from handlebars
+//Generic function
 function op(title, author, model) {
   return new Promise(function (resolve, reject) {
     var data_create = {
@@ -39,7 +39,7 @@ create = function (title, author, model) {
       .view_content
       .map((item) => {
         var element = JSON.parse(item);
-        //element => '{"required":true,"name":"descripcion","type":"text"}',
+        // element => '{"required":true,"name":"descripcion","type":"text"}',
         data_create
           .elements
           .push(element)

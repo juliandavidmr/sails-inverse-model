@@ -3,7 +3,7 @@ require('./configs/color');
 exports.message = [
   color("                .-..-.																		      ", "blue"),
   "																																							",
-  color("Sails", "yellow") + color("-inverse", "blue") + color("-model", "red") + color("<|    .-..-.	v. 2.0.1  ", "green"),
+  color("Sails", "yellow") + color("-inverse", "blue") + color("-model", "red") + color("<|    .-..-.	" + require('./package.json').version, "green"),
   color("                    |\										", "green"),
   color("    ~    ~   ~     /|.\ 									", "green"),
   color("       ~  ~       / || \									", "green"),
@@ -14,7 +14,7 @@ exports.message = [
   color(" __---__--__---___--__---___--_-_---___    ", "blue"),
   " 																																						",
   " -----------------------------------------------------------------						",
-  " :: " + (new Date()) + "																	",
+  " :: " + (new Date()).toString() + "																	",
   " -----------------------------------------------------------------						",
   'Example:',
   '  $ mkdir sails-output',
@@ -50,14 +50,15 @@ exports.message = [
   ' -u, --user        User of database',
   ' -p, --pass        Password of database',
   ' -d, --database    Database name',
-  ' -h, --host        Host server                Default: localhost',
-  ' -m, --models      Folder output models       Default: Folder actual',
-  ' -c, --controllers Folder output controllers  Default: Folder actual',
-  ' -v, --views       Folder output views        Default: Folder actual ' + color('(Experimental)', 'yellow'),
-  ' -t, --type        Type gestor database: mysql|postgres|mongodb   Default: mysql',
-  ' -s, --schema      Schema of database postgres: Default: public (Only PostgreSQL' +
-      ')',
-  ' -f, --file        .sql file location entry (Only MySQL)' + color(" NEW", "blue") + color(' (Experimental)', 'yellow'),
-  // '	 -i, --intelligen  Detects your attributes of type passwords and mail: y|n
-  // Default: n' '  --neez  Type of word: yes|no|all  Default: all',
-]
+  ' -h, --host        Host server               Default: localhost',
+  ' -m, --models      Folder output models      Default: Folder actual',
+  ' -c, --controllers Folder output controllers Default: Folder actual',
+  ' -v, --views       Folder output views       Default: Folder actual ' + color('(Experimental)', 'yellow'),
+  ' -t, --type        Type gestor database: mysql|postgres|mongodb  Default: mysql',
+  ' -s, --schema      (Only PostgreSQL) Schema database postgres: Default: public',
+  ' -f, --file        (Only MySQL) .sql file path entry' + color(' (Experimental)', 'yellow')
+];
+
+exports.generate = [
+
+];
