@@ -10,6 +10,8 @@ require('./configs/color');
 require('./configs/route');
 require('./generator/save');
 
+var convert = require('./configs/toHtmlAttribute');
+
 var generate_my_transpile = require('./generator/mysql/compiler_sqlfile_mysql');
 var generate_my = require('./generator/mysql/compiler_mysql');
 var generate_pg = require('./generator/postgres/compiler_pg');
@@ -45,14 +47,20 @@ if (g) {
 
   split_attr.map((item, i) => {
     let separate = item.split(':');
+    let _required = separate[2]
+      ? separate[2]
+        .toString()
+        .toLowerCase()
+        .startsWith('r')
+      : false;
 
-    aux_item_model.push(separate[0] + ": { type: '" + separate[1] + "'}");
+    aux_item_model.push(separate[0] + ": { type: '" + separate[1] + "', required: " + _required + "}");
 
     var content_view = {
-      required: false,
+      required: _required,
       default_value: 0,
       name: separate[0],
-      type: separate[1]
+      type: convert.SailstoHtmlAtt(separate[1])
     };
 
     aux_item_view.push(JSON.stringify(content_view));
@@ -64,14 +72,14 @@ if (g) {
     view_content: aux_item_view
   });
 
-  // console.log('Attri: => ', JSON.stringify(Model, null, 4));  
+  // console.log('Attri: => ', JSON.stringify(Model, null, 4));
 
   switch (option) {
     case 'view':
       generate_view.generate(Model, concat(process.cwd(), 'Views'));
       break;
     case 'model':
-      saveModels(concat(process.cwd(), 'Models'), Model); 
+      saveModels(concat(process.cwd(), 'Models'), Model);
       break;
     case 'controller':
       saveControllers(concat(process.cwd(), 'Controllers'), Model);
@@ -183,13 +191,14 @@ if (g) {
     if (db && host) {
       type = type.toLowerCase(); //pg, postgres, mysql
 
-      if (type.indexOf("pg") != -1 || type.indexOf("postgres") != -1) {     //pg, postgres
+      if (type.indexOf("pg") != -1 || type.indexOf("postgres") != -1) { //pg, postgres
         config.port = 5432;
         generate_pg.generate(config, folder_models, folder_controllers, folder_views);
       } else if (type.indexOf("my") != -1 || type.indexOf("mysql") != -1) { //my, mysql
         delete config.schema;
         generate_my.generate(config, folder_models, folder_controllers, folder_views);
-      } else if (type.indexOf("mg") != -1 || type.indexOf("mongo") != -1) { //mg, mongo
+      } else if (type.indexOf("mg") != -1 || type.indexOf("mongo") != -1) {
+        //mg, mongo
         generate_mg
           .generate(config.host, 27017, config.database, folder_views, folder_models, folder_controllers)
           .then((value) => {

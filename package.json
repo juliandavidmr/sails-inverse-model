@@ -1,7 +1,7 @@
 {
   "name": "sails-inverse-model",
   "version": "2.0.1",
-  "description": "Generate models, controllers and views (MVC) for Sails.js from the database any.",
+  "description": "Sails Inverse Model helps you build models, controllers and views JS Sails from any database. In addition, you can quickly and individually generate each model, view, controller or all three at the same time.",
   "license": "MIT",
   "repository": "https://github.com/juliandavidmr/sails-inverse-model",
   "main": "index.js",
@@ -42,6 +42,7 @@
     "prompt",
     "auto",
     "sailsjs",
+    "sails",
     "models",
     "generate",
     "file",
