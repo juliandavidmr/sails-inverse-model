@@ -47,12 +47,12 @@ $ sails-inverse-model -g all --name Pet -a "name:string:r owner:string"
 ```
 
 ## Detail #
-Param | Description
--- | --
--g | Generate view, model, controller
---name | Name of the model, driver, and view folder.
--a | Content of the element to generate
-name:string:r | Name of the attribute : [type of data](#http://sailsjs.com/documentation/concepts/models-and-orm/attributes) : required.
+| # | Param           |                  Description               |
+|:- | :-------------: | -----------------------------------------: |
+| 1 | g               | Generate view, model, controller           |
+| 2 | name            | Name of the model, driver, and view folder |
+| 3 | a               | Content of the element to generate         |
+| 4 | name:string:r   | Name of the attribute : [type of data](#http://sailsjs.com/documentation/concepts/models-and-orm/attributes) : required         |
 
 
 # Generator ##
