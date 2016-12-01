@@ -39,7 +39,7 @@ Generate models, controllers and views (MVC) for Sails.js from the database any.
 
                 .-..-.											      
 
-Sails-inverse-model<|    .-..-.	v. 1.1.9  
+Sails-inverse-model<|    .-..-.  
                     |										
     ~    ~   ~     /|. 									
        ~  ~       / || 									

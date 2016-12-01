@@ -169,6 +169,7 @@ function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
 	return result;
 }
 
+// TODO: Detect 
 function foreignkeys(constraints) {
 
 }

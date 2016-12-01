@@ -7,6 +7,8 @@ require('./crud');
 require('../configs/route');
 require('../configs/color');
 
+var author =  "sails-inverse-model";
+
 exports.generate = function(Models, folder_views) {
   mkdir(folder_views).then(() => {
     var bar3 = new ProgressBar(':bar', {
@@ -17,7 +19,7 @@ exports.generate = function(Models, folder_views) {
       var route = concat(folder_views, model.model_name);
       
       mkdir(route).then(() => {
-        create(model.model_name, "sails-inverse-model", model).then((html) => {
+        create(model.model_name, author, model).then((html) => {
           //console.log(html);
           gencode.save(html, route, "create.ejs").then((value) => {
             //console.log(value);
@@ -26,7 +28,7 @@ exports.generate = function(Models, folder_views) {
           });
         });
 
-        edit(model.model_name, "sails-inverse-model", model).then((html) => {
+        edit(model.model_name, author, model).then((html) => {
           gencode.save(html, route, "edit.ejs").then((value) => {
             //console.log(value);
           }, (err) => {
@@ -34,7 +36,7 @@ exports.generate = function(Models, folder_views) {
           });
         });
 
-        index(model.model_name, "sails-inverse-model", model).then((html) => {
+        index(model.model_name, author, model).then((html) => {
           gencode.save(html, route, "index.ejs").then((value) => {
             //console.log(value);
           }, (err) => {
@@ -42,7 +44,7 @@ exports.generate = function(Models, folder_views) {
           });
         });
 
-        show(model.model_name, "sails-inverse-model", model).then((html) => {
+        show(model.model_name, author, model).then((html) => {
           gencode.save(html, route, "show.ejs").then((value) => {
             //console.log(value);
           }, (err) => {

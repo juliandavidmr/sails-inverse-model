@@ -28,12 +28,14 @@ if (g) {
    * Generator manual
    * Input standar
    */
+  var name = cli.flags.n || cli.flags.name; // Name model, controller and view
+
   var Model = [];
-  var option = g === true
+  var option = (g === true)
     ? 'all'
     : g;
 
-  var attributes = cli.flags.attributes || cli.flags.a;
+  var attributes = cli.flags.attributes || cli.flags.a; // Attributes
 
   var split_attr = attributes.split(' ');
   // console.log("attributes: ", JSON.stringify(split_attr, null, 3));
@@ -57,7 +59,7 @@ if (g) {
   });
 
   Model.push({
-    model_name: 'Name'.concat(parseInt(Math.random(10) * 100)),
+    model_name: name || 'Name'.concat(parseInt(Math.random(20) * 100)), // Name file model, controller, and folder view
     content: "attributes: { " + aux_item_model + " }",
     view_content: aux_item_view
   });
@@ -66,20 +68,18 @@ if (g) {
 
   switch (option) {
     case 'view':
-      generate_view.generate(Model, concat(process.cwd(), 'Model'));
+      generate_view.generate(Model, concat(process.cwd(), 'Views'));
       break;
     case 'model':
-      saveModels(concat(process.cwd(), 'Model'), Model); 
+      saveModels(concat(process.cwd(), 'Models'), Model); 
       break;
     case 'controller':
-      saveControllers(concat(process.cwd(), 'Controller'), Model);
+      saveControllers(concat(process.cwd(), 'Controllers'), Model);
       break;
     case 'all':
-      saveModels(concat(process.cwd(), 'Model'), Model);
-      saveControllers(concat(process.cwd(), 'Controller'), Model);
-      generate_view.generate(Model, concat(process.cwd(), 'Model'));
-      break;
-    default:
+      saveModels(concat(process.cwd(), 'Models'), Model);
+      saveControllers(concat(process.cwd(), 'Controllers'), Model);
+      generate_view.generate(Model, concat(process.cwd(), 'Views'));
       break;
   }
 } else {
