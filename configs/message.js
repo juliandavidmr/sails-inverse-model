@@ -1,9 +1,9 @@
-require('./configs/color');
+require('./color');
 
-exports.message = [
+exports.show = [
   color("                .-..-.																		      ", "blue"),
   "																																							",
-  color("Sails", "yellow") + color("-inverse", "blue") + color("-model", "red") + color("<|    .-..-.	" + require('./package.json').version, "green"),
+  color("Sails", "yellow") + color("-inverse", "blue") + color("-model", "red") + color("<|    .-..-.	" + require('../package.json').version, "green"),
   color("                    |\										", "green"),
   color("    ~    ~   ~     /|.\ 									", "green"),
   color("       ~  ~       / || \									", "green"),
@@ -61,14 +61,25 @@ exports.message = [
   'You can quickly generate a model, a controller, a view or these three at the sam' +
       'e time.',
   '# Generate model',
-  '$ sails-inverse-model -g model --name Pet -a "name:string:r owner:string"',
-  '\n',
+  '$ sails-inverse-model -g model --name Pet -a "name:string:r:u owner:string"',
+  '',
   '# Generate Controller',
-  '$ sails-inverse-model -g controller --name Pet -a "name:string:r owner:string"',
-  '\n',
+  '$ sails-inverse-model -g controller --name Pet -a "name:string:r:u owner:string"',
+  '',
   '# Generate View',
   '$ sails-inverse-model -g view --name Pet -a "name:string:r owner:string"',
-  '\n',
+  '',
   '# Generate all (Model, View and Controller)',
-  '$ sails-inverse-model -g all --name Pet -a "name:string:r owner:string"'
+  '$ sails-inverse-model -g all --name Pet -a "name:string:r:k owner:string"',
+  '',
+  'Where:',
+  '--------------------------------------------',
+  '|Param | Description   |     Example       |',
+  '|------|--------------|-------------------|',
+  '|   r  | Required      | catname:string:r  |',
+  '|   u  | Unique        | catname:string:u  |',
+  '|   a  | Autoincrement | index:integer:a   |',
+  '|   k  | Primary Key   | index:integer:k   |',
+  '--------------------------------------------',
+  'You can also set all three parameters at the same time, for example: index:integer:a:u:r'
 ];

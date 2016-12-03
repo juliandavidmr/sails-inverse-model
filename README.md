@@ -53,7 +53,7 @@ $ sails-inverse-model -g all --name Pet -a "name:string:r:k owner:string"
 |g                  | Generate view, model, controller    |
 |name               | Name: model, driver, and view folder|
 |a                  | Content of the element to generate  |
-|name:string:params | Attribute name: data type: required |
+|name:string:params | Attribute name: data type: params   |
 
 Specifies the type of data that will be stored in this attribute. [Here](http://sailsjs.com/documentation/concepts/models-and-orm/attributes)
 
@@ -66,11 +66,36 @@ Specifies the type of data that will be stored in this attribute. [Here](http://
 |a      | Autoincrement | index:integer:a   |
 |k      | Primary Key   | index:integer:k   |
 
-You can also set all three parameters at the same time, for example: __index:integer:a:r:u__
+You can also set all three parameters at the same time, for example: __index:integer:a:u:r__
 
-# Generator ##
+## Example
+```js
+sails-inverse-model -g model --name Pet -a "index:integer:r:u:a name:string:r:u owner:string:r"
+/*
+=>
+  module.exports = {
+      attributes: {
+          index: {                -> index
+              type: 'integer',    -> :integer 
+              required: true,     -> :r
+              unique: true,       -> :u 
+              autoincrement: true -> :a
+          },
+          name: {
+              type: 'string',
+              required: true,
+              unique: true
+          },
+          owner: {
+              type: 'string',
+              required: true
+          }
+      }
+  };
+*/
+```
 
-In the bash o cmd:
+# Generator (from Database) ##
 
 ```bash
 $ sails-inverse-model --help
@@ -78,7 +103,7 @@ $ sails-inverse-model --help
 
                   .-..-.												      
 															
-  Sails-inverse-model<|    .-..-.	2.0.1
+  Sails-inverse-model<|    .-..-.	2.x.x
                       |										
       ~    ~   ~     /|. 									
          ~  ~       / || 									
@@ -130,6 +155,9 @@ $ sails-inverse-model --help
    -t, --type        Type gestor database: mysql|postgres|mongodb  Default: mysql
    -s, --schema      (Only PostgreSQL) Schema database postgres: Default: public
    -f, --file        (Only MySQL) .sql file path entry (Experimental)
+    
+    ...
+
 ```
 
 ## MySQL
@@ -141,7 +169,7 @@ $ sails-inverse-model -u root -p root -d mydbmysql -m -v -c
 ### MySQL from file .sql
 
 ```js
-$ node sails-inverse-model -f /your/path/to/script.sql -m -v -c
+$ sails-inverse-model -f /your/path/to/script.sql -m -v -c
 ```
 
 ## PostgreSQL
@@ -158,13 +186,13 @@ $ sails-inverse-model -d blog_db -t mg -m -v -c
 
 # Import ##
 
-_Step 1:_
+### Install package
 
 ```bash
 $ npm install sails-inverse-model --save
 ```
 
-_Step 2 with **MySQL**_
+### Generate from **MySQL** #
 
 ```js
 var sim = require('sails-inverse-model');
@@ -184,7 +212,7 @@ var folder_views = "/your/project/sails/"; //if folder_models == "" then: no gen
 sim.generatemy(config, folder_models, folder_controllers, folder_views, plurallang);
 ```
 
-_Step 2 with **PostgreSQL**_
+### Generate from **PostgreSQL** #
 
 ```js
 var sim = require('sails-inverse-model');
@@ -205,7 +233,19 @@ var folder_views = "/your/project/sails/"; //if folder_models == "" then: no gen
 sim.generatepg(config, folder_models, folder_controllers, folder_views, plurallang);
 ```
 
+### Generate from **MongoDB** #
+
+```js
+var sim = require('sails-inverse-model');
+
+var folder_controllers = "/your/project/sails/api/"; //if folder_models == "" then: no generate controllers
+var folder_models = "/your/project/sails/api/"; //if folder_models == "" then: no generate models
+var folder_views = "/your/project/sails/"; //if folder_models == "" then: no generate views
+
+//                host       port         database           views         models        controllers
+sim.generatemg('localhost', 27017, 'my_name_collection', folder_views, folder_models, folder_controllers);
+```
+
 ### Then navigate to the output folder and can find the js generated.
 
 ### Fork me :)
---------------------------------------------------------------------------------

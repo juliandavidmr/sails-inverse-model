@@ -3,7 +3,7 @@
  * @autor Julian David (@anlijudavid)
  * 2016
  *
- * Process mysql to models waterline
+ * Mysql to models waterline
  */
 
 var mondongo = require('mondongo');
@@ -130,6 +130,8 @@ function toSailsAttribute(type, name_attribute, isid) {
 }
 
 /*
+Mondongo:
+
 this.generate('localhost', 27017, 'blog_db').then((Models) => {
   console.log("Output:\n", JSON.stringify(Models, null, 2));
 }, (error) => {

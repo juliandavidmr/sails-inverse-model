@@ -10,11 +10,6 @@ require('./configs/color');
 require('./configs/route');
 require('./generator/save');
 
-const REQUIRED = 'required: true,';
-const UNIQUE = 'unique: true,';
-const AUTOINC = 'autoincrement: true,';
-const PRIMARYKEY = 'primaryKey: true,';
-
 var convert = require('./configs/toHtmlAttribute');
 
 var generate_my_transpile = require('./generator/mysql/compiler_sqlfile_mysql');
@@ -24,9 +19,10 @@ var generate_mg = require('./generator/mongodb/compiler_mongo');
 var generate_view = require('./genviews/view');
 
 var exitsfile = require('is-existing-file');
-var message = require('./message');
+var message = require('./configs/message');
+var constants = require('./configs/constants');
 
-var cli = meow(message.message);
+var cli = meow(message.show);
 
 var g = cli.flags.g || cli.flags.generate;
 
@@ -59,9 +55,9 @@ if (g) {
 
       var _aux_item = separate[0] + ": { type: '" + separate[1] + "', ";
       aux_item_model.push(_aux_item + result + "}");
-      
+
       var content_view = {
-        required: result.indexOf(REQUIRED) !== -1,
+        required: result.indexOf(constants.REQUIRED) !== -1,
         default_value: 0,
         name: separate[0],
         type: convert.SailstoHtmlAtt(separate[1])
@@ -235,8 +231,8 @@ function info() {
 }
 
 /**
- * Search params 
- * 
+ * Search params
+ *
  * @param {array} params
  * @param {function} cb
  * @returns string
@@ -248,13 +244,13 @@ function paramSearchFill(params, cb) {
     var element = params[i];
 
     if (element == 'r' || element == 'required') {
-      output += REQUIRED;
+      output += constants.REQUIRED;
     } else if (element == 'u' || element == 'unique') {
-      output += UNIQUE;
+      output += constants.UNIQUE;
     } else if (element == 'a' || element == 'autoincrement') {
-      output += AUTOINC;
-    }else if (element == 'k' || element == 'primarykey') {
-      output += PRIMARYKEY;
+      output += constants.AUTOINC;
+    } else if (element == 'k' || element == 'primarykey') {
+      output += constants.PRIMARYKEY;
     }
   }
 
