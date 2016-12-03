@@ -34,29 +34,39 @@ You can quickly generate a model, a controller, a view or these three at the sam
 
 ```bash
 # Generate model
-$ sails-inverse-model -g model --name Pet -a "name:string:r owner:string"
+$ sails-inverse-model -g model --name Pet -a "name:string:r:u owner:string"
 
 # Generate Controller
-$ sails-inverse-model -g controller --name Pet -a "name:string:r owner:string"
+$ sails-inverse-model -g controller --name Pet -a "name:string:r:u owner:string"
 
 # Generate View
 $ sails-inverse-model -g view --name Pet -a "name:string:r owner:string"
 
 # Generate all (Model, View and Controller)
-$ sails-inverse-model -g all --name Pet -a "name:string:r owner:string"
+$ sails-inverse-model -g all --name Pet -a "name:string:r:k owner:string"
 ```
 
 ## Detail #
 
-|Param         |                  Description        |
-|-------------:|:------------------------------------|
-|g             | Generate view, model, controller    |
-|name          | Name: model, driver, and view folder|
-|a             | Content of the element to generate  |
-|name:string:r | Attribute name: data type: required |
+|Param              |          Description                |
+|------------------:|:------------------------------------|
+|g                  | Generate view, model, controller    |
+|name               | Name: model, driver, and view folder|
+|a                  | Content of the element to generate  |
+|name:string:params | Attribute name: data type: required |
 
-Specifies the type of data that will be stored in this attribute. One of:
-http://sailsjs.com/documentation/concepts/models-and-orm/attributes
+Specifies the type of data that will be stored in this attribute. [Here](http://sailsjs.com/documentation/concepts/models-and-orm/attributes)
+
+## Params #
+
+|Param  | Description   |     Example       |
+|------:|:--------------|:------------------|
+|r      | Required      | catname:string:r  |
+|u      | Unique        | catname:string:u  |
+|a      | Autoincrement | index:integer:a   |
+|k      | Primary Key   | index:integer:k   |
+
+You can also set all three parameters at the same time, for example: __index:integer:a:r:u__
 
 # Generator ##
 

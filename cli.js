@@ -10,6 +10,11 @@ require('./configs/color');
 require('./configs/route');
 require('./generator/save');
 
+const REQUIRED = 'required: true,';
+const UNIQUE = 'unique: true,';
+const AUTOINC = 'autoincrement: true,';
+const PRIMARYKEY = 'primaryKey: true,';
+
 var convert = require('./configs/toHtmlAttribute');
 
 var generate_my_transpile = require('./generator/mysql/compiler_sqlfile_mysql');
@@ -27,9 +32,9 @@ var g = cli.flags.g || cli.flags.generate;
 
 if (g) {
   /**
-   * Generator manual
-   * Input standar
-   */
+	 * Generator manual
+	 * Input standar
+	 */
   var name = cli.flags.n || cli.flags.name; // Name model, controller and view
 
   var Model = [];
@@ -45,25 +50,25 @@ if (g) {
   let aux_item_model = []; // Item Model
   let aux_item_view = []; // Item View
 
-  split_attr.map((item, i) => {
+  // [xyz:string, abc:number]
+  split_attr.map((item) => {
     let separate = item.split(':');
-    let _required = separate[2]
-      ? separate[2]
-        .toString()
-        .toLowerCase()
-        .startsWith('r')
-      : false;
 
-    aux_item_model.push(separate[0] + ": { type: '" + separate[1] + "', required: " + _required + "}");
+    paramSearchFill(separate, function (result) {
+      // console.log('=>',result);
 
-    var content_view = {
-      required: _required,
-      default_value: 0,
-      name: separate[0],
-      type: convert.SailstoHtmlAtt(separate[1])
-    };
+      var _aux_item = separate[0] + ": { type: '" + separate[1] + "', ";
+      aux_item_model.push(_aux_item + result + "}");
+      
+      var content_view = {
+        required: result.indexOf(REQUIRED) !== -1,
+        default_value: 0,
+        name: separate[0],
+        type: convert.SailstoHtmlAtt(separate[1])
+      };
 
-    aux_item_view.push(JSON.stringify(content_view));
+      aux_item_view.push(JSON.stringify(content_view));
+    });
   });
 
   Model.push({
@@ -92,9 +97,9 @@ if (g) {
   }
 } else {
   /**
-   * Generator automatic
-   * Databases
-   */
+	 * Generator automatic
+	 * Databases
+	 */
   var user,
     pass,
     db,
@@ -214,6 +219,9 @@ if (g) {
   }
 }
 
+/**
+ * Menu info console
+ */
 function info() {
   console.log("User       :", color(user || "Not used", "green"));
   console.log("Password   :", color(pass || "Not used", "green"));
@@ -224,4 +232,35 @@ function info() {
   console.log("Controllers:", color((folder_controllers || "Not generate"), "green"));
   console.log("DB         :", color((type), "green"));
   console.log("Schema (pg):", color((schema), "green"));
+}
+
+/**
+ * Search params 
+ * 
+ * @param {array} params
+ * @param {function} cb
+ * @returns string
+ */
+function paramSearchFill(params, cb) {
+  var output = '';
+
+  for (var i = 2; i < params.length; i++) {
+    var element = params[i];
+
+    if (element == 'r' || element == 'required') {
+      output += REQUIRED;
+    } else if (element == 'u' || element == 'unique') {
+      output += UNIQUE;
+    } else if (element == 'a' || element == 'autoincrement') {
+      output += AUTOINC;
+    }else if (element == 'k' || element == 'primarykey') {
+      output += PRIMARYKEY;
+    }
+  }
+
+  if (output.endsWith(',')) {
+    output = output.substring(0, output.length - 1);
+  }
+
+  return cb(output);
 }
