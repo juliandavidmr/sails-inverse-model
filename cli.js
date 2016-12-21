@@ -18,7 +18,7 @@ var generate_pg = require('./generator/postgres/compiler_pg');
 var generate_mg = require('./generator/mongodb/compiler_mongo');
 var generate_view = require('./genviews/view');
 
-var exitsfile = require('is-existing-file');
+var exitsfile = requie('is-existing-file');
 var message = require('./configs/message');
 var constants = require('./configs/constants');
 
@@ -33,10 +33,10 @@ if (g) {
 	 */
   var name = cli.flags.n || cli.flags.name; // Name model, controller and view
 
-  var Model = [];
-  var option = (g === true)
-    ? 'all'
-    : g;
+  var Model = [];           // ArrayList of models
+  var option = (g === true) // Option default
+    ? 'all'                 // Option Controller, Views & Models
+    : g;                    // Select by user
 
   var attributes = cli.flags.attributes || cli.flags.a; // Attributes
 
@@ -44,9 +44,9 @@ if (g) {
   // console.log("attributes: ", JSON.stringify(split_attr, null, 3));
 
   let aux_item_model = []; // Item Model
-  let aux_item_view = []; // Item View
+  let aux_item_view = [];  // Item View
 
-  // [xyz:string, abc:number]
+  // Example: [xyz:string, abc:number]
   split_attr.map((item) => {
     let separate = item.split(':');
 
@@ -57,7 +57,7 @@ if (g) {
       aux_item_model.push(_aux_item + result + "}");
 
       var content_view = {
-        required: result.indexOf(constants.REQUIRED) !== -1,
+        required: result.indexOf(constants.REQUIRED) !== -1, // Index string required for view input <input type="any" required="true | false">
         default_value: 0,
         name: separate[0],
         type: convert.SailstoHtmlAtt(separate[1])
@@ -96,17 +96,17 @@ if (g) {
 	 * Generator automatic
 	 * Databases
 	 */
-  var user,
-    pass,
-    db,
-    host,
-    port,
-    folder_models,
-    folder_controllers,
-    folder_views,
-    schema,
-    type,
-    filesql;
+  var user,               // Option user database
+    pass,                 // Option password database
+    db,                   // Option name database
+    host,                 // Option host database
+    port,                 // Option port database
+    folder_models,        // Option path folder models 
+    folder_controllers,   // Option path folder controllers
+    folder_views,         // Option path folder views
+    schema,               // Option schema database => postgres
+    type,                 // Option type gestor database: mysql, postgres, mongodb
+    filesql;              // Option path file .sql
 
   //User
   user = cli.flags.u || cli.flags.user;
@@ -118,6 +118,8 @@ if (g) {
   var pass = (cli.flags.p || cli.flags.pass);
   if (pass === true) {
     pass = undefined;
+    console.warn("Missing password database");
+    process.exit(1);    
   } else if (pass) {
     pass = pass.toString();
   }
@@ -134,13 +136,14 @@ if (g) {
   }
 
   //Type gestor database mysql | postgres | mongo
-  type = cli.flags.t || cli.flags.type || "mysql";
+  type = cli.flags.t || cli.flags.type || "mysql"; // Default Mysql
+  console.log(">>", type);
   if (type === true || type == "true") {
     type = "mysql";
   }
 
   //Schema database postgres
-  schema = cli.flags.s || cli.flags.schema || "public";
+  schema = cli.flags.s || cli.flags.schema || "public"; // Default public
   if (schema === true || schema == "true") {
     schema = "public";
   }
@@ -179,7 +182,7 @@ if (g) {
     port: 3306
   };
 
-  info();
+  info(); // Show message info
   if (filesql) {
     exitsfile(filesql, function (exits) {
       if (exits) {

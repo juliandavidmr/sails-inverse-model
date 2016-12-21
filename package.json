@@ -28,9 +28,7 @@
   ],
   "keywords": [
     "cli-app",
-    "cli",
-    "bin",
-    "sails",
+    "sailsjs",
     "generator",
     "model",
     "controller",
@@ -40,12 +38,9 @@
     "mysql",
     "prompt",
     "auto",
-    "sailsjs",
-    "sails",
     "models",
     "generate",
     "file",
-    "argv",
     "sql",
     "api",
     "waterline"
