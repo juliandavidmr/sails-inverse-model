@@ -16,26 +16,28 @@ var b = new Beautifier();
  * @return {void}                        [none]
  */
 saveControllers = function (dir_folder_controllers, Models) {
-  var bar2 = new ProgressBar(':bar', {total: Models.length});
+	var bar2 = new ProgressBar(':bar', {
+		total: Models.length
+	});
 
-  mkdir(dir_folder_controllers).then(() => {
-    Models.map((model) => {
-      var name_c = to
-        .capitalize(model.model_name)
-        .trim()
-        .concat("Controller.js");        
-      gencode.save(b.beautify_js(to.saveController(s.camelize(model.model_name))), dir_folder_controllers, name_c).then((value) => {
-        bar2.tick();
-        if (bar2.complete) {
-          console.log('Controllers ' + color("[OK]", "green"));
-        }
-      }, (err) => {
-        console.warn([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
-      });
-    });
-  }, (ex) => {
-    console.error(ex);
-  });
+	mkdir(dir_folder_controllers).then(() => {
+		Models.map((model) => {
+			var name_c = to
+				.capitalize(model.model_name)
+				.trim()
+				.concat("Controller.js");
+			gencode.save(b.beautify_js(to.saveController(s.camelize(model.model_name))), dir_folder_controllers, name_c).then((value) => {
+				bar2.tick();
+				if (bar2.complete) {
+					console.log('Controllers ' + color("[OK]", "green"));
+				}
+			}, (err) => {
+				console.warn([ansi.red.open, "ERROR", err, ansi.red.close].join("\n"));
+			});
+		});
+	}, (ex) => {
+		console.error(ex);
+	});
 };
 
 /**
@@ -44,25 +46,27 @@ saveControllers = function (dir_folder_controllers, Models) {
  * @param  {array of models: {model_name & content}} Models           [Array of models postgres]
  */
 saveModels = function (dir_folder_model, Models) {
-  var bar = new ProgressBar(':bar', {total: Models.length});
+	var bar = new ProgressBar(':bar', {
+		total: Models.length
+	});
 
-  //console.log(Models);
-  mkdir(dir_folder_model).then(() => {
-    Models.map((model) => {
-      //console.log(model);
-      var name_m = to
-        .capitalize(model.model_name)
-        .trim() + ".js";
-      gencode.save(b.beautify_js(to.toModel(model.content)), dir_folder_model, name_m).then((value) => {
-        bar.tick();
-        if (bar.complete) {
-          console.log('Models ' + color("[OK]", "green"));
-        }
-      }, (err) => {
-        console.error(color(err, "red"));
-      });
-    });
-  }, (ex) => {
-    console.error(ex);
-  });
+	//console.log(Models);
+	mkdir(dir_folder_model).then(() => {
+		Models.map((model) => {
+			//console.log(model);
+			var name_m = to
+				.capitalize(model.model_name)
+				.trim() + ".js";
+			gencode.save(b.beautify_js(to.toModel(model.content)), dir_folder_model, name_m).then((value) => {
+				bar.tick();
+				if (bar.complete) {
+					console.log('Models ' + color("[OK]", "green"));
+				}
+			}, (err) => {
+				console.error(color(err, "red"));
+			});
+		});
+	}, (ex) => {
+		console.error(ex);
+	});
 };

@@ -37,5 +37,5 @@ exports.generatemy = function (config, folder_models, folder_controllers, folder
  * @return {[none]}                    [description]
  */
 exports.generatemg = function (host, port, database, folder_views, folder_models, folder_controllers) {
-  compiler_mm.generate(host, port, database, folder_views, folder_models, folder_controllers);
+  compiler_mg.generate(host, port, database, folder_views, folder_models, folder_controllers);
 };
