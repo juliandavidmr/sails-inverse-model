@@ -37,7 +37,7 @@ You can quickly generate a model, a controller, a view or these three at the sam
 $ sails-inverse-model -g model --name Pet -a "name:string:r:u owner:string"
 
 # Generate Controller
-$ sails-inverse-model -g controller --name Pet -a "name:string:r:u owner:string"
+$ sails-inverse-model -g controller --name Pet -a ""
 
 # Generate View
 $ sails-inverse-model -g view --name Pet -a "name:string:r owner:string"
@@ -99,11 +99,12 @@ sails-inverse-model -g model --name Pet -a "index:integer:r:u:a name:string:r:u 
 
 ```bash
 $ sails-inverse-model --help
- Generate models, controllers and views (MVC) for Sails.js from the database any.
 
-                  .-..-.												      
-															
-  Sails-inverse-model<|    .-..-.	2.x.x
+  Sails Inverse Model helps you build models, controllers and views JS Sails from any database. In addition, you can quickly and individually generate each model, view, controller or all three at the same time.
+
+                  .-..-.														      
+																	
+  Sails-inverse-model<|    .-..-.	2.0.4
                       |										
       ~    ~   ~     /|. 									
          ~  ~       / || 									
@@ -112,8 +113,9 @@ $ sails-inverse-model --help
                `--'-------' 								
      _--__--_---__---___--__---__--___      
    __---__--__---___--__---___--_-_---___    
- 															
-   -----------------------------------------------------------------						
+   ----------------------------------------------------------
+   :: Sat Feb 04 2017 22:43:52 GMT-0500 (COT)
+   ----------------------------------------------------------
   Example:
     $ mkdir sails-output
     $ cd sails-output
@@ -129,11 +131,11 @@ $ sails-inverse-model --help
   DB           : pg
   Schema (pg)  : public
   =====================================
-  Complete views.
+  Views [OK]
   =====================================
-  Complete Models.
+  Models [OK]
   =====================================
-  Complete Controllers.
+  Controllers [OK]
 
       Note: Copy models      => your/project_sails/api
             Copy controllers => your/project_sails/api
@@ -143,7 +145,7 @@ $ sails-inverse-model --help
    $ sails lift
 
    More info: https://github.com/juliandavidmr/sails-inverse-model
-   -----------------------------------------------------------------						
+   ---------------------------------------------------------------
   Options:
    -u, --user        User of database
    -p, --pass        Password of database
@@ -155,8 +157,32 @@ $ sails-inverse-model --help
    -t, --type        Type gestor database: mysql|postgres|mongodb  Default: mysql
    -s, --schema      (Only PostgreSQL) Schema database postgres: Default: public
    -f, --file        (Only MySQL) .sql file path entry (Experimental)
-    
-    ...
+
+
+  ====================== Individual generation ==================
+  You can quickly generate a model, a controller, a view or these three at the same time.
+  # Generate model
+  $ sails-inverse-model -g model --name Pet -a "name:string:r:u owner:string"
+
+  # Generate Controller
+  $ sails-inverse-model -g controller --name Pet -a "name:string:r:u owner:string"
+
+  # Generate View
+  $ sails-inverse-model -g view --name Pet -a "name:string:r owner:string"
+
+  # Generate all (Model, View and Controller)
+  $ sails-inverse-model -g all --name Pet -a "name:string:r:k owner:string"
+
+  Where:
+  --------------------------------------------
+  |Param | Description   |     Example       |
+  |------|---------------|-------------------|
+  |   r  | Required      | catname:string:r  |
+  |   u  | Unique        | catname:string:u  |
+  |   a  | Autoincrement | index:integer:a   |
+  |   k  | Primary Key   | index:integer:k   |
+  --------------------------------------------
+  You can also set all three parameters at the same time, for example: index:integer:a:u:r
 
 ```
 
@@ -248,4 +274,4 @@ sim.generatemg('localhost', 27017, 'my_name_collection', folder_views, folder_mo
 
 ### Then navigate to the output folder and can find the js generated.
 
-### Fork me :)
+# [Contributions](/CONTRIBUTING.md)
