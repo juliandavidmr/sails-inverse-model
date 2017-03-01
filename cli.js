@@ -18,7 +18,7 @@ var generate_pg = require('./generator/postgres/compiler_pg');
 var generate_mg = require('./generator/mongodb/compiler_mongo');
 var generate_view = require('./genviews/view');
 
-var exitsfile = requie('is-existing-file');
+var exitsfile = require('is-existing-file');
 var message = require('./configs/message');
 var constants = require('./configs/constants');
 
