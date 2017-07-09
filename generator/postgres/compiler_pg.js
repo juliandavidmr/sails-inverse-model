@@ -26,6 +26,22 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
 
 				if (schemas.tables.hasOwnProperty(table)) { //confirm data of tables
 					var attrs = schemas.tables[table]["columns"];
+					
+					// wrap the column_default value in double quotes because it 
+					// can contain '::' which is otherwise interpreted at json object notation
+					// changes:
+					// default: \'\'::text
+					// to:
+					// default: "\'\'::text"
+					Object.keys(attrs).forEach(
+						function(thisAttr){ 
+							if (attrs[thisAttr].hasOwnProperty('column_default'))
+							{
+								attrs[thisAttr].column_default = '\"'+attrs[thisAttr].column_default+'\"';
+							}
+						} 
+					);
+
 					//console.log(attrs);
 					var attributes_sails = [], view_contents = [];
 					for (var attr in attrs) { // attributes of a table
