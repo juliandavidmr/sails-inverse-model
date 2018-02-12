@@ -28,11 +28,11 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
       async.forEachOf(data, function(value, table, callback) {
         if (data.hasOwnProperty(table)) {
           console.log(color("[" + (count++) + " Generating]", "blue") + " " + table + " table ...");
-
+          var tableCloumnsData = data[table].columns ? data[table].columns : data[table];
           var attributes_sails = [],
             view_contents = [];
           mysqldesc.keyColumnUsage(config, config.database, table, function(err, data2) {
-            for (var colum in data[table]) {
+            for (var colum in tableCloumnsData) {
               //console.log(table + "=>" + colum);
               var reference_fk = undefined;
               if (data2[colum] && data2[colum]["REFERENCED_TABLE_NAME"]) {
@@ -42,7 +42,7 @@ exports.generate = function(config, folder_models, folder_controllers, folder_vi
                 };
                 //console.log(table + "=>" + JSON.stringify(data2[colum], null, 4));
               }
-              var attributes = data[table][colum];
+              var attributes = tableCloumnsData[colum];
               //console.log(attributes);
               var result = transpile(attributes, colum, reference_fk);
               view_contents.push(result.view_content);
