@@ -4,7 +4,7 @@
  * @version 1.0.0
  * 2016
  */
-var to = require('../configs/to');
+const to = require('../configs/to');
 
 /**
  * [toModel simple json to model sails]

@@ -46,17 +46,17 @@
     "waterline"
   ],
   "dependencies": {
-    "ansi-styles": "^2.2.1",
-    "async": "^2.0.0",
-    "gencode": "^1.0.3",
-    "handlebars": "^4.0.5",
+    "ansi-styles": "^3.2.1",
+    "async": "^2.6.0",
+    "gencode": "^1.0.4",
+    "handlebars": "^4.0.11",
     "meow": "^3.5.0",
     "mkdir-promise": "^1.0.0",
     "mondongo": "^1.0.0",
-    "mysqldesc": "^1.1.3",
+    "mysqldesc": "^1.1.4",
     "node-js-beautify": "^0.1.0",
     "pg-json-schema-export": "^0.13.7",
-    "progress": "^1.1.8",
+    "progress": "^2.0.0",
     "underscore.string": "^3.3.4"
   }
 }

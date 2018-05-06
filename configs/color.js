@@ -1,4 +1,4 @@
-var ansi = require('ansi-styles');
+const ansi = require('ansi-styles');
 
 // Color text with ansi-styles
 color = function(text, color_) {

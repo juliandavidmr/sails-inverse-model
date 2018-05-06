@@ -38,3 +38,8 @@ jspm_packages
 
 test/api
 test
+
+yarn.lock
+controllers/
+models/
+views/
