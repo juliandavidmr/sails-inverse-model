@@ -4,7 +4,7 @@ var config = {
   host: "localhost",
   database: "almacen",
   user: "root",
-  pass: "root",
+  password: "root",
   port: 3306
 };
 

@@ -102,81 +102,84 @@ exports.toSailsAttribute = function(Type, attrib, default_value_, is_nullable_, 
     type: undefined
   };
 
-  //console.log(attrib);
   var attribute = [];
 
-  Type = Type.toLowerCase();
+  var type = Type.toLowerCase();
+  var typeSplit = type.match(/(enum)\((.+)\)/);
+  if(!typeSplit) var typeSplit = type.match(/(\w+)\((\d+),(\d+)\)/);
+  if(!typeSplit) var typeSplit = type.match(/(\w+)\((\d+)\)/);
+  if(!typeSplit) var typeSplit = type.match(/(\w+)/);
 
-  if (Type.indexOf('varchar') > -1 ||
-    Type.indexOf('time') > -1) {
-    attribute.push(getString(Type));
+  if(typeSplit[1] === 'enum') {
+    attribute.push(getEnum(typeSplit[2]));
     content_view.type = "text";
-  } else if (Type.indexOf('int') > -1 ||
-    Type.indexOf('small') > -1) { //Include smallint
-    attribute.push(getInteger(Type));
-    content_view.type = "number";
-  } else if (Type.indexOf('bool') > -1 ||
-    Type.indexOf('bit') > -1) {
-    attribute.push(getBoolean());
-    content_view.type = "checkbox";
-  } else if (Type.indexOf('float') > -1 ||
-    Type.indexOf('dec') > -1 || //Include decimal
-    Type.indexOf('numeric') > -1 ||
-    Type.indexOf('real') > -1 ||
-    Type.indexOf('precicion') > -1) {
-    attribute.push(getFloat());
-    content_view.type = "number";
-  } else if (Type.indexOf('enum') > -1) {
-    attribute.push(getEnum(Type));
-    content_view.type = "text";
-  } else if (Type.indexOf('text') > -1) {
-    attribute.push(getText());
-    content_view.type = "text";
-  } else if (Type.indexOf('datetime') > -1) {
-    attribute.push(getDateTime());
-    content_view.type = "datetime";
-  } else if (Type.indexOf('date') > -1 ||
-    Type.indexOf('year') > -1) {
-    attribute.push(getDate());
-    content_view.type = "date";
   }
+  else if(typeSplit[1] === 'json') {
+    attribute.push(getJson(typeSplit[2]));
+    content_view.type = "text";
+  }
+  else if(['varchar', 'char', 'tinytext', 'text', 'mediumtext', 'longtext', 'time'].indexOf(typeSplit[1]) > -1) {
+    attribute.push(getString(typeSplit[1], typeSplit[2]));
+    content_view.type = "text";
+  }
+  else if(['int', 'smallint', 'tinyint', 'bigint'].indexOf(typeSplit[1]) > -1) {
+    attribute.push(getInteger(typeSplit[1], typeSplit[2]));
+    content_view.type = "number";
+  }
+  else if(['decimal', 'double', 'real', 'float'].indexOf(typeSplit[1]) > -1) {
+    attribute.push(getNumber(typeSplit[1], typeSplit[2]));
+    content_view.type = "number";
+  }
+  else if(['bool', 'bit'].indexOf(typeSplit[1]) > -1) {
+    attribute.push(getBoolean(typeSplit[1]));
+    content_view.type = "checkbox";
+  }
+  else if(typeSplit[1] === 'year') {
+    attribute.push(getInteger(typeSplit[1], typeSplit[2]));
+    content_view.type = "number";
+  }
+  else if(typeSplit[1] === 'date') {
+    attribute.push(getString(typeSplit[1]));
+    content_view.type = "text";
+  }
+  else if(typeSplit[1] === 'datetime', 'timestamp') {
+    attribute.push(getString(typeSplit[1]));
+    content_view.type = "text";
+  }
+
   if (key_ === "PRI") {
-    attribute.push(getPK());
+    // attribute.push(getPK());
     content_view.required = true;
   } else if (key_ === "MUL") {
     if (reference_fk) {
       attrib = attrib.replace(FK_IDENTIFIER, "");
       //attrib = reference_fk.table;
       //attribute.push('model: ' + reference_fk.table);
-      attribute = ['model: "' + reference_fk.table + '"'];
+      attribute = [`model: "${s.camelize(reference_fk.table).trim()}"`];
     }
   } else if (key_ === "UNI") {
     attribute.push(getUnique());
   }
-  if (is_nullable_ === "NO") {
-    attribute.push(getRequired());
-    content_view.required = true;
-  }
-  if (default_value_ !== "" && !default_value_ && default_value_ !== null) {
+  if (default_value_ !== "" && default_value_ !== null) {
     var def = "defaultsTo: ";
     if (content_view.type == "text") {
-      def += '"' + default_value_ + '"';
+      def += `"${default_value_}"`;
     } else {
       def += default_value_;
     }
     attribute.push(def);
   }
+  else if (is_nullable_ === "NO") {
+    attribute.push(getRequired());
+    content_view.required = true;
+  }
 
   var result = {
-    model_content: attrib.toLowerCase() + ": {" + attribute.join(',') + "}",
+    model_content: attrib + ": {" + attribute.join(',') + "}",
     view_content: JSON.stringify(content_view)
   };
   return result;
 };
-
-function getPK() {
-  return "primaryKey: true";
-}
 
 function getRequired() {
   return "required: true";
@@ -186,62 +189,67 @@ function getUnique() {
   return "unique: true";
 }
 
-function getString(Type) {
+function getString(type, length) {
   var out = [];
-  var attr_aux = Type.toLowerCase().split(/[(*)]/);
   out.push('type: "string"');
-  if (attr_aux[1]) {
-    out.push("size: " + parseInt(attr_aux[1]));
+  out.push(`columnType: "${type}"`);
+  if (length) {
+    out.push(`maxLength: ${length}`);
   }
   return quitComma(out.join(","));
 }
 
-function getInteger(Type) {
+function getInteger(type, length) {
   var out = [];
-  var attr_aux = Type.toLowerCase().split(/[(*)]/);
-  out.push('type: "integer"');
-  if (attr_aux[1]) {
-    out.push("size: " + parseInt(attr_aux[1]));
-  }
+  out.push('type: "number"');
+  out.push(`columnType: "${type}"`);
+  out.push(`isInteger: true`);
+  // if (length) {
+  //   out.push(`maxLength: ${length}`);
+  // }
   return quitComma(out.join(","));
 }
 
-function getFloat() {
-  return 'type: "float"';
+function getNumber(type, length) {
+  var out = [];
+  out.push('type: "number"');
+  out.push(`columnType: "${type}"`);
+  // if (length) {
+  //   out.push(`maxLength: ${length}`);
+  // }
+  return quitComma(out.join(","));
 }
 
-function getBoolean() {
-  return 'type: "binary"';
-}
-
-function getText() {
-  return 'type: "text"';
-}
-
-function getDate() {
-  return 'type: "date"';
-}
-
-function getDateTime() {
-  return 'type: "datetime"';
+function getBoolean(type) {
+  var out = [];
+  out.push('type: "boolean"');
+  out.push(`columnType: "${type}"`);
+  return quitComma(out.join(","));
 }
 
 // TODO: Mejorar la detección de items con una expresion regular
-function getEnum(Type) {
-  var out = [];
-  var pa1 = Type.indexOf('(');
-  var pa2 = Type.indexOf(')');
-
-  pa1++;
-  var line = Type.substring(pa1, pa2).replace(",", "").split('\'');
-  //console.log(pa1 + ", " + pa2);
+function getEnum(enums) {
+  var outEnums = [];
+  var line = enums.split(/['|"](.*?)['|"],*/);
   line.map((item) => {
     if (item !== "") {
-      out.push('"' + item + '"');
+      outEnums.push(`"${item}"`);
     }
   });
-  //out.push("required: true");
-  return "enum: [" + quitComma(out.join(",")) + "]";
+  var out = [];
+  out.push('type: "string"');
+  out.push('columnType: "enum"');
+  out.push(`isIn: [${quitComma(outEnums.join(","))}]`);
+  return quitComma(out.join(","));
+}
+
+function getJson(length) {
+  var out = [];
+  out.push('type: "json"');
+  if (length) {
+    out.push(`maxLength: ${length}`);
+  }
+  return quitComma(out.join(","));
 }
 
 function quitComma(str) {
