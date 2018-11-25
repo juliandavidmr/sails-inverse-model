@@ -1,0 +1,13 @@
+<h1>Show {{title}}</h1>
+
+{{#each elements}}
+<p>
+    <strong>{{name}}:</strong>
+    <%= element.{{name}} %>
+</p>
+{{/each}}
+
+<br>
+<a href="/{{name}}/edit/<%= element.id %>">Edit</a>
+<a href="/{{name}}/create">New</a>
+<a href="/{{name}}">Back</a>

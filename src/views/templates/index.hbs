@@ -1,0 +1,58 @@
+<h1>{{title}}</h1>
+
+<% if (result.length == 0) { %>
+<h4>
+	0 {{title}}
+</h4>
+<% } else { %>
+<table>
+	<thead>
+		<th>#</th>
+		<th>id</th>
+		{{#each elements}}
+		<th>{{name}}</th>
+		{{/each}}
+
+		<th>created at</th>
+		<th>updated at</th>
+		<th colspan="3"></th>
+	</thead>
+
+	<tbody>
+		<% result.forEach((item, i) => { %>
+		<tr>
+			<td>
+				<%= (i + 1) %>
+			</td>
+			<td>
+				<%= item.id %>
+			</td>
+			{{#each elements}}
+			<td>
+				<%= item.{{name}} %>
+			</td>
+			{{/each}}
+			<td>
+				<%= item.createdAt %>
+			</td>
+			<td>
+				<%= item.updatedAt %>
+			</td>
+			<td>
+				<a href="/{{name}}/show/<%= item.id %>">Show</a>
+			</td>
+			<td>
+				<a href="/{{name}}/delete/<%= item.id %>">Delete</a>
+			</td>
+			<td>
+				<a href="/{{name}}/edit/<%= item.id %>">Edit</a>
+			</td>
+		</tr>
+		<% }) %>
+	</tbody>
+</table>
+
+<% } %>
+
+<br>
+<a href="/{{name}}/create">New</a>
