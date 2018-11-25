@@ -14,21 +14,22 @@
 - [Import](#import)
 
 --------------------------------------------------------------------------------
-# Installation ##
+
+## Installation
 
 Linux or MacOS
 
 ```bash
-$ sudo npm install sails-inverse-model -g
+$ sudo npm install sails-inverse-model@next -g
 ```
 
 Microsoft Windows
 
 ```bash
-$ npm install sails-inverse-model -g
+$ npm install sails-inverse-model@next -g
 ```
 
-# Individual generation ##
+## Individual generation
 
 You can quickly generate a model, a controller, a view or these three at the same time simply define the attributes of your model. Let's look at an example:
 
@@ -46,7 +47,7 @@ $ sails-inverse-model -g view --name Pet -a "name:string:r owner:string"
 $ sails-inverse-model -g all --name Pet -a "name:string:r:k owner:string"
 ```
 
-## Detail #
+## Detail
 
 |Param              |          Description                |
 |------------------:|:------------------------------------|
@@ -57,7 +58,7 @@ $ sails-inverse-model -g all --name Pet -a "name:string:r:k owner:string"
 
 Specifies the type of data that will be stored in this attribute. [Here](http://sailsjs.com/documentation/concepts/models-and-orm/attributes)
 
-## Params #
+## Params
 
 |Param  | Description   |     Example       |
 |------:|:--------------|:------------------|
@@ -69,9 +70,10 @@ Specifies the type of data that will be stored in this attribute. [Here](http://
 You can also set all three parameters at the same time, for example: __index:integer:a:u:r__
 
 ## Example
-```js
+
+```bash
 sails-inverse-model -g model --name Pet -a "index:integer:r:u:a name:string:r:u owner:string:r"
-/*
+
 =>
   module.exports = {
       attributes: {
@@ -92,10 +94,9 @@ sails-inverse-model -g model --name Pet -a "index:integer:r:u:a name:string:r:u 
           }
       }
   };
-*/
 ```
 
-# Generator (from Database) ##
+## Generator (from Database)
 
 ```bash
 $ sails-inverse-model --help
@@ -104,7 +105,7 @@ $ sails-inverse-model --help
 
                   .-..-.														      
 																	
-  Sails-inverse-model<|    .-..-.	2.0.4
+  Sails-inverse-model<|    .-..-.	2.x.x
                       |										
       ~    ~   ~     /|. 									
          ~  ~       / || 									
@@ -189,36 +190,36 @@ $ sails-inverse-model --help
 ## MySQL
 
 ```bash
-$ sails-inverse-model -u root -p root -d mydbmysql -m -v -c
+sails-inverse-model -u root -p root -d mydbmysql -m -v -c
 ```
 
 ### MySQL from file .sql
 
-```js
-$ sails-inverse-model -f /your/path/to/script.sql -m -v -c
+```bash
+sails-inverse-model -f /your/path/to/script.sql -m -v -c
 ```
 
 ## PostgreSQL
 
 ```bash
-$ sails-inverse-model -u postgres -p root -d almacen -t pg -m -v -c
+sails-inverse-model -u postgres -p root -d almacen -t pg -m -v -c
 ```
 
 ## MongoDB
 
 ```bash
-$ sails-inverse-model -d blog_db -t mg -m -v -c
+sails-inverse-model -d blog_db -t mg -m -v -c
 ```
 
-# Import ##
+# Import
 
-### Install package
+## Install package
 
 ```bash
-$ npm install sails-inverse-model --save
+npm install sails-inverse-model --save
 ```
 
-### Generate from **MySQL** #
+## Generate from **MySQL**
 
 ```js
 var sim = require('sails-inverse-model');
@@ -238,7 +239,7 @@ var folder_views = "/your/project/sails/"; //if folder_models == "" then: no gen
 sim.generatemy(config, folder_models, folder_controllers, folder_views, plurallang);
 ```
 
-### Generate from **PostgreSQL** #
+### Generate from **PostgreSQL**
 
 ```js
 var sim = require('sails-inverse-model');
@@ -259,7 +260,7 @@ var folder_views = "/your/project/sails/"; //if folder_models == "" then: no gen
 sim.generatepg(config, folder_models, folder_controllers, folder_views, plurallang);
 ```
 
-### Generate from **MongoDB** #
+### Generate from **MongoDB**
 
 ```js
 var sim = require('sails-inverse-model');
