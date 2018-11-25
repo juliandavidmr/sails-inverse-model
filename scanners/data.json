@@ -26,18 +26,18 @@
 		"close"
 	],
 	"start": [
-    "create table if not exists",
-    "create table"
+		"create table if not exists",
+		"create table"
 	],
 	"contains": [
 		"enum(",
-    "primary key (",
+		"primary key (",
 		"unique key"
 	],
 	"attr": [
 		"primary key (",
 		"key",
 		"unique key",
-    "constraint"
+		"constraint"
 	]
 }

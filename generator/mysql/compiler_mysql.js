@@ -14,7 +14,7 @@ var async = require("async");
 require('../save');
 require('../../configs/color');
 
-var FK_IDENTIFIER = "id";
+const FK_IDENTIFIER = "id";
 
 exports.generate = function(config, folder_models, folder_controllers, folder_views) {
   // Describe connected database
@@ -113,36 +113,28 @@ exports.toSailsAttribute = function(Type, attrib, default_value_, is_nullable_, 
   if(typeSplit[1] === 'enum') {
     attribute.push(getEnum(typeSplit[2]));
     content_view.type = "text";
-  }
-  else if(typeSplit[1] === 'json') {
+  } else if(typeSplit[1] === 'json') {
     attribute.push(getJson(typeSplit[2]));
     content_view.type = "text";
-  }
-  else if(['varchar', 'char', 'tinytext', 'text', 'mediumtext', 'longtext', 'time'].indexOf(typeSplit[1]) > -1) {
+  } else if(['varchar', 'char', 'tinytext', 'text', 'mediumtext', 'longtext', 'time'].indexOf(typeSplit[1]) > -1) {
     attribute.push(getString(typeSplit[1], typeSplit[2]));
     content_view.type = "text";
-  }
-  else if(['int', 'smallint', 'tinyint', 'bigint'].indexOf(typeSplit[1]) > -1) {
+  } else if(['int', 'smallint', 'tinyint', 'bigint'].indexOf(typeSplit[1]) > -1) {
     attribute.push(getInteger(typeSplit[1], typeSplit[2]));
     content_view.type = "number";
-  }
-  else if(['decimal', 'double', 'real', 'float'].indexOf(typeSplit[1]) > -1) {
+  } else if(['decimal', 'double', 'real', 'float'].indexOf(typeSplit[1]) > -1) {
     attribute.push(getNumber(typeSplit[1], typeSplit[2]));
     content_view.type = "number";
-  }
-  else if(['bool', 'bit'].indexOf(typeSplit[1]) > -1) {
+  } else if(['bool', 'bit'].indexOf(typeSplit[1]) > -1) {
     attribute.push(getBoolean(typeSplit[1]));
     content_view.type = "checkbox";
-  }
-  else if(typeSplit[1] === 'year') {
+  } else if(typeSplit[1] === 'year') {
     attribute.push(getInteger(typeSplit[1], typeSplit[2]));
     content_view.type = "number";
-  }
-  else if(typeSplit[1] === 'date') {
+  } else if(typeSplit[1] === 'date') {
     attribute.push(getString(typeSplit[1]));
     content_view.type = "text";
-  }
-  else if(typeSplit[1] === 'datetime', 'timestamp') {
+  } else if(typeSplit[1] === 'datetime', 'timestamp') {
     attribute.push(getString(typeSplit[1]));
     content_view.type = "text";
   }

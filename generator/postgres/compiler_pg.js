@@ -157,7 +157,6 @@ function toSailsAttribute(type_, attrib, default_value_, is_nullable_) {
 		sails_attribute_children.push("required: " + false);
 	}
 
-	//console.log("=>=>=>=>>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>=>>=>=>=>");
 	//console.log(JSON.stringify(content_view));
 
 	var result = {
